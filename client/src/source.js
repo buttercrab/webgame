@@ -40,7 +40,7 @@ socket.on('disconnect', () => {
     peer = new SimplePeer({
         initiator: true,
         trickle: false,
-        reconnectTimer: 1000,
+        reconnectTimer: 5000,
         iceTransportPolicy: 'relay',
         config: {
             iceServers: [
@@ -53,6 +53,47 @@ socket.on('disconnect', () => {
         }
     })
 });
+
+function hexString(buffer) {
+    const byteArray = new Uint8Array(buffer);
+
+    const hexCodes = [...byteArray].map(value => {
+        const hexCode = value.toString(16);
+        const paddedHexCode = hexCode.padStart(2, '0');
+        return paddedHexCode;
+    });
+
+    return hexCodes.join('');
+}
+
+function digestMessage(message) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(message);
+    return window.crypto.subtle.digest('SHA-512', data);
+}
+
+function login(id, pw) {
+    socket.emit('ready-to-login');
+    socket.on('ready-to-login', msg => {
+        digestMessage(pw).then(value => {
+            digestMessage(hexString(value) + msg + Math.floor(new Date().getTime() / 1000)).then(hashed => {
+                socket.emit('login', {
+                    id: id,
+                    hashed: hexString(hashed)
+                });
+            });
+        });
+    });
+}
+
+function register(id, pw) {
+    digestMessage(pw).then(value => {
+        socket.emit('register', {
+            id: id,
+            pw: hexString(value)
+        });
+    });
+}
 
 ///==========
 
@@ -84,8 +125,6 @@ function draw() {
         y += 5;
     if (keyOn['KeyD'])
         x += 5;
-
-    document.title = getFrameRate();
 }
 
 ///===========

@@ -47,6 +47,10 @@ function server(certs) {
         fs.createReadStream(__dirname + '/client/src/source.js').pipe(res);
     });
 
+    app.get('/favicon.ico', (req, res) => {
+        res.statusCode = 404;
+    });
+
     app.get('*', (req, res) => {
         res.statusCode = 200;
         res.setHeader('content-type', 'text/html');
@@ -66,55 +70,10 @@ function server(certs) {
     });
 
     const io = require('socket.io')(server);
+    const user = require('./src/user.js')(io);
 
     io.on('connection', socket => {
-        if (!connections[socket.id])
-            connections[socket.id] = {
-                server: new Peer({
-                    wrtc: wrtc,
-                    trickle: false,
-                    reconnectTimer: 5000,
-                    iceTransportPolicy: 'relay',
-                    config: {
-                        iceServers: [
-                            {
-                                urls: "turn:buttercrab.ml:8888",
-                                username: "buttercrab",
-                                credential: "1234"
-                            }
-                        ]
-                    }
-                })
-            };
-
-        connections[socket.id].server.on('error', err => {
-            console.log(err);
-        });
-
-        connections[socket.id].server.on('signal', data => {
-            socket.emit('signal', {
-                signal: data
-            });
-        });
-
-        connections[socket.id].server.on('data', msg => {
-            const data = JSON.parse(msg);
-            if(data.type === 'heartbeat') {
-                connections[socket.id].server.send(JSON.stringify({
-                    type: 'heartbeat'
-                }));
-            } else {
-                connections[socket.id].server.send(msg);
-            }
-        });
-
-        socket.on('signal', msg => {
-            connections[socket.id].server.signal(msg.signal);
-
-            connections[socket.id].server.on('connect', () => {
-                console.log(`socket id ${socket.id} has connected to peer`);
-            });
-        });
+        user.connect(socket);
 
         socket.emit('heartbeat');
 
@@ -123,8 +82,7 @@ function server(certs) {
         });
 
         socket.on('disconnect', () => {
-            connections[socket.id].server.destroy();
-            connections[socket.id] = undefined;
+            user.disconnect(socket.id);
         });
     });
 }
