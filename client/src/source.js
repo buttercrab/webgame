@@ -27,7 +27,9 @@ socket.on('signal', msg => {
 });
 
 peer.on('connect', () => {
-    console.log('connected');
+    peer.send(JSON.stringify({
+        type: 'heartbeat'
+    }));
 });
 
 socket.on('heartbeat', () => {
@@ -59,8 +61,7 @@ function hexString(buffer) {
 
     const hexCodes = [...byteArray].map(value => {
         const hexCode = value.toString(16);
-        const paddedHexCode = hexCode.padStart(2, '0');
-        return paddedHexCode;
+        return hexCode.padStart(2, '0');
     });
 
     return hexCodes.join('');
@@ -69,18 +70,15 @@ function hexString(buffer) {
 function digestMessage(message) {
     const encoder = new TextEncoder();
     const data = encoder.encode(message);
-    return window.crypto.subtle.digest('SHA-512', data);
+    return window.crypto.subtle.digest('SHA-256', data);
 }
 
 function login(id, pw) {
-    socket.emit('ready-to-login');
-    socket.on('ready-to-login', msg => {
-        digestMessage(pw).then(value => {
-            digestMessage(hexString(value) + msg + Math.floor(new Date().getTime() / 1000)).then(hashed => {
-                socket.emit('login', {
-                    id: id,
-                    hashed: hexString(hashed)
-                });
+    digestMessage(pw).then(value => {
+        digestMessage(hexString(value) + Math.floor(new Date().getTime() / 1000)).then(hashed => {
+            socket.emit('login', {
+                id: id,
+                pw: hexString(hashed)
             });
         });
     });
@@ -94,6 +92,26 @@ function register(id, pw) {
         });
     });
 }
+
+socket.on('login', msg => {
+    if(msg) {
+        //TODO: login success
+        console.log(1);
+    } else {
+        //login failed
+        console.log(2);
+    }
+});
+
+socket.on('register', msg => {
+    if(msg) {
+        //TODO: register success
+        console.log(3);
+    } else {
+        //register failed
+        console.log(4);
+    }
+});
 
 ///==========
 

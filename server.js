@@ -8,9 +8,18 @@ const lex = require('greenlock').create({
 });
 
 const fs = require('fs');
-const Peer = require('simple-peer');
-const wrtc = require('wrtc');
 const Turn = require('node-turn');
+const expressSession = require('express-session');
+const sharedSession = require('express-socket.io-session');
+const FileStore = require('session-file-store')(expressSession);
+
+const session = expressSession({
+    secret: 'f392h*32@usfeo{]a]]|',
+    resave: true,
+    saveUninitialized: true,
+    cookie: {secure: true, maxAge: 2592000000},
+    store: new FileStore
+});
 
 /**
  * Turn Server for p2p connection
@@ -34,6 +43,9 @@ function server(certs) {
     const port = 8443;
     const app = require('express')();
     app.use(require('morgan')('dev'));
+    app.use(session);
+
+    app.enable('trust proxy');
 
     app.get('/', (req, res) => {
         res.statusCode = 200;
@@ -71,14 +83,26 @@ function server(certs) {
 
     const io = require('socket.io')(server);
     const user = require('./src/user.js')(io);
+    const util = require('./src/util.js')();
+
+    io.use(sharedSession(session, {
+        autoSave: true
+    }));
 
     io.on('connection', socket => {
         user.connect(socket);
 
         socket.emit('heartbeat');
-
         socket.on('heartbeat', () => {
             socket.emit('heartbeat');
+        });
+
+        socket.on('login', msg => {
+            socket.emit('login', user.login(socket.id, msg.id, msg.pw));
+        });
+
+        socket.on('register', msg => {
+            socket.emit('register', user.register(socket.id, msg.id, msg.pw));
         });
 
         socket.on('disconnect', () => {

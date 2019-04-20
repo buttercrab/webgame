@@ -3,41 +3,54 @@ const crypto = require('crypto');
 const Peer = require('simple-peer');
 const wrtc = require('wrtc');
 
-module.exports = (io) => {
-    this.io = io;
-    // this.game = game;
-    this.userData = fs.readFileSync(__dirname + '/../data/user.json');
-    this.connected = {};
+module.exports = () => {
+    const self = this;
+    self.userData = JSON.parse(fs.readFileSync(__dirname + '/../data/user.json').toString());
+    self.connected = {};
 
-    this.saveUserData = () => {
-        fs.writeFileSync(__dirname + '/../data/user.json', userData);
+    self.saveUserData = () => {
+        fs.writeFileSync(__dirname + '/../data/user.json', JSON.stringify(self.userData));
     };
 
-    this.login = (socketid, id, hashed, msg) => {
-        if (!this.userData[id]) return false;
+    self.login = (socketid, id, hashed) => {
+        if (!self.userData[id]) return false;
         for (let i = 0, t = Math.floor(new Date().getTime() / 1000); i < 60; i++, t--) {
-            if (crypto.createHash('sha512').update(this.userData[id].pw + msg + t).digest('hex') === hashed) {
-                this.connected[socketid].logined = true;
-                this.connected[socketid].isGuest = false;
-                this.connected[socketid].id = id;
+            if (crypto.createHash('sha256').update(self.userData[id].pw + t).digest('hex') === hashed) {
+                self.connected[socketid].logined = true;
+                self.connected[socketid].isGuest = false;
+                self.connected[socketid].id = id;
+
+                self.connected[socketid].socket.handshake.session.userid = id;
+                self.connected[socketid].socket.handshake.session.pw = self.userData[id].pw;
+                self.connected[socketid].socket.handshake.session.save();
+
                 return true;
             }
         }
         return false;
     };
 
-    this.register = (id, hashed) => {
-        if (this.userData[id]) return false;
-        this.userData[id] = {
+    self.register = (socketid, id, hashed) => {
+        if (self.userData[id]) return false;
+        self.userData[id] = {
             pw: hashed
         };
-        this.saveUserData();
+        self.saveUserData();
+
+        self.connected[socketid].logined = true;
+        self.connected[socketid].isGuest = false;
+        self.connected[socketid].id = id;
+
+        self.connected[socketid].socket.handshake.session.userid = id;
+        self.connected[socketid].socket.handshake.session.pw = hashed;
+        self.connected[socketid].socket.handshake.session.save();
+
         return true;
     };
 
-    this.connect = (socket) => {
-        if(this.connected[socket.id]) return false;
-        this.connected[socket.id] = {
+    self.connect = (socket) => {
+        if (self.connected[socket.id]) return false;
+        self.connected[socket.id] = {
             logined: false,
             isGuest: false,
             peer: new Peer({
@@ -58,40 +71,48 @@ module.exports = (io) => {
             socket: socket
         };
 
-        this.connected[socket.id].peer.on('error', err => {
+        if (self.userData[socket.handshake.session.userid] &&
+            self.userData[socket.handshake.session.userid].pw === socket.handshake.session.pw) {
+
+            self.connected[socket.id].logined = true;
+            self.connected[socket.id].isGuest = false;
+            self.connected[socket.id].id = socket.handshake.session.userid;
+        }
+
+        self.connected[socket.id].peer.on('error', err => {
             console.log(err);
         });
 
-        this.connected[socket.id].peer.on('signal', data => {
+        self.connected[socket.id].peer.on('signal', data => {
             socket.emit('signal', {
                 signal: data
             });
         });
 
-        this.connected[socket.id].peer.on('data', msg => {
+        self.connected[socket.id].peer.on('data', msg => {
             const data = JSON.parse(msg);
-            if(data.type === 'heartbeat') {
-                this.connected[socket.id].peer.send(JSON.stringify({
+            if (data.type === 'heartbeat') {
+                self.connected[socket.id].peer.send(JSON.stringify({
                     type: 'heartbeat'
                 }));
             } else {
-                this.connected[socket.id].peer.send(msg);
+                self.connected[socket.id].peer.send(msg);
             }
         });
 
         socket.on('signal', msg => {
-            this.connected[socket.id].peer.signal(msg.signal);
+            self.connected[socket.id].peer.signal(msg.signal);
         });
 
         return true;
     };
 
-    this.disconnect = (socketid) => {
-        if(!this.connected[socketid]) return false;
-        this.connected[socketid].peer.destroy();
-        this.connected[socketid] = undefined;
+    self.disconnect = (socketid) => {
+        if (!self.connected[socketid]) return false;
+        self.connected[socketid].peer.destroy();
+        self.connected[socketid] = undefined;
         return true;
     };
 
-    return this;
+    return self;
 };
