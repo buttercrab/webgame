@@ -1,14 +1,14 @@
 {
-  "name": "test",
+  "name": "webgame",
   "version": "1.0.0",
-  "description": "",
+  "description": "super fast webgame using p2p connection",
   "main": "index.js",
   "scripts": {
     "run": "nodemon server.js",
     "start": "node server.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "jaeyong sung",
   "license": "ISC",
   "dependencies": {
     "express": "latest",

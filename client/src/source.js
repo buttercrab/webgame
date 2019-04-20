@@ -76,24 +76,26 @@ function draw() {
     fill('rgb(0, 0, 0)');
     ellipse(x, y, 30, 30);
 
-    if (keyOn['w'])
+    if (keyOn['KeyW'])
         y -= 5;
-    if (keyOn['a'])
+    if (keyOn['KeyA'])
         x -= 5;
-    if (keyOn['s'])
+    if (keyOn['KeyS'])
         y += 5;
-    if (keyOn['d'])
+    if (keyOn['KeyD'])
         x += 5;
+
+    document.title = getFrameRate();
 }
 
 ///===========
 
 document.addEventListener('keydown', evt => {
-    peer.send(JSON.stringify({type: 'keydown', key: evt.key, time: new Date().getTime()}));
+    peer.send(JSON.stringify({type: 'keydown', key: evt.code, time: new Date().getTime()}));
 });
 
 document.addEventListener('keyup', evt => {
-    peer.send(JSON.stringify({type: 'keyup', key: evt.key, time: new Date().getTime()}));
+    peer.send(JSON.stringify({type: 'keyup', key: evt.code, time: new Date().getTime()}));
 });
 
 peer.on('data', msg => {

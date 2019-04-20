@@ -25,7 +25,7 @@ new Turn({
         "buttercrab": "1234"
     },
     listeningPort: 8888,
-    debugLevel: 'OFF'
+    listeningIps: ['192.168.0.100']
 }).start();
 
 let connections = {};
@@ -87,6 +87,10 @@ function server(certs) {
                 })
             };
 
+        connections[socket.id].server.on('error', err => {
+            console.log(err);
+        });
+
         connections[socket.id].server.on('signal', data => {
             socket.emit('signal', {
                 signal: data
@@ -96,11 +100,9 @@ function server(certs) {
         connections[socket.id].server.on('data', msg => {
             const data = JSON.parse(msg);
             if(data.type === 'heartbeat') {
-                setTimeout(() => {
-                    connections[socket.id].server.send(JSON.stringify({
-                        type: 'heartbeat'
-                    }));a
-                }, 10000);
+                connections[socket.id].server.send(JSON.stringify({
+                    type: 'heartbeat'
+                }));
             } else {
                 connections[socket.id].server.send(msg);
             }
@@ -117,12 +119,11 @@ function server(certs) {
         socket.emit('heartbeat');
 
         socket.on('heartbeat', () => {
-            setTimeout(() => {
-                socket.emit('heartbeat');
-            }, 10000);
+            socket.emit('heartbeat');
         });
 
         socket.on('disconnect', () => {
+            connections[socket.id].server.destroy();
             connections[socket.id] = undefined;
         });
     });
