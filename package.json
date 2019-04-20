@@ -1,0 +1,35 @@
+{
+  "name": "test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "run": "nodemon server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "browserify-middleware": "^8.1.1",
+    "electron-webrtc": "^0.3.0",
+    "express": "latest",
+    "greenlock": "^2.7.6",
+    "greenlock-store-fs": "^3.0.0",
+    "le-acme-core": "^2.1.4",
+    "morgan": "^1.9.1",
+    "node-minify": "^3.6.0",
+    "node-turn": "0.0.4",
+    "nodemon": "^1.18.11",
+    "redirect-https": "^1.3.0",
+    "simple-peer": "^9.3.0",
+    "socket.io": "^2.2.0",
+    "spdy": "^4.0.0",
+    "wrtc": "^0.3.7"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "client/*"
+    ]
+  }
+}
