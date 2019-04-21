@@ -1,5 +1,5 @@
 module.exports = () => {
-    this.randomString = (length) => {
+    this.randomString = length => {
         let text = "";
         const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 

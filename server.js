@@ -50,13 +50,13 @@ function server(certs) {
     app.get('/', (req, res) => {
         res.statusCode = 200;
         res.setHeader('content-type', 'text/html');
-        fs.createReadStream(__dirname + '/client/src/index.html').pipe(res);
+        fs.createReadStream(__dirname + '/public/src/index.html').pipe(res);
     });
 
     app.get('/source.js', (req, res) => {
         res.statusCode = 200;
         res.setHeader('content-type', 'application/javascript');
-        fs.createReadStream(__dirname + '/client/src/source.js').pipe(res);
+        fs.createReadStream(__dirname + '/public/src/source.js').pipe(res);
     });
 
     app.get('/favicon.ico', (req, res) => {
@@ -66,7 +66,7 @@ function server(certs) {
     app.get('*', (req, res) => {
         res.statusCode = 200;
         res.setHeader('content-type', 'text/html');
-        fs.createReadStream(__dirname + '/client/src/404.html').pipe(res);
+        fs.createReadStream(__dirname + '/public/src/404.html').pipe(res);
     });
 
     require('http').createServer(lex.middleware(require('redirect-https')())).listen(8080);
@@ -103,6 +103,22 @@ function server(certs) {
 
         socket.on('register', msg => {
             socket.emit('register', user.register(socket.id, msg.id, msg.pw));
+        });
+
+        socket.on('getRooms', () => {
+            socket.emit('getRooms', user.getRooms());
+        });
+
+        socket.on('makeRoom', () => {
+            socket.emit('makeRoom', user.makeRoom(socket.id));
+        });
+
+        socket.on('joinRoom', roomid => {
+            socket.emit('joinRoom', user.joinRoom(socket.id, roomid));
+        });
+
+        socket.on('leaveRoom', () => {
+            socket.emit('leaveRoom', user.leaveRoom(socket.id));
         });
 
         socket.on('disconnect', () => {

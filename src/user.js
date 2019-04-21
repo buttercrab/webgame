@@ -2,11 +2,13 @@ const fs = require('fs');
 const crypto = require('crypto');
 const Peer = require('simple-peer');
 const wrtc = require('wrtc');
+const uniqid = require('uniqid');
 
 module.exports = () => {
     const self = this;
     self.userData = JSON.parse(fs.readFileSync(__dirname + '/../data/user.json').toString());
     self.connected = {};
+    self.room = {};
 
     self.saveUserData = () => {
         fs.writeFileSync(__dirname + '/../data/user.json', JSON.stringify(self.userData));
@@ -46,6 +48,11 @@ module.exports = () => {
         self.connected[socketid].socket.handshake.session.save();
 
         return true;
+    };
+
+    self.logined = (socketid) => {
+        if (!self.connected.hasOwnProperty(socketid)) return false;
+        return self.connected[socketid].logined || self.connected[socketid].isGuest;
     };
 
     self.connect = (socket) => {
@@ -109,9 +116,60 @@ module.exports = () => {
 
     self.disconnect = (socketid) => {
         if (!self.connected[socketid]) return false;
+        self.leaveRoom(socketid);
         self.connected[socketid].peer.destroy();
         self.connected[socketid] = undefined;
         return true;
+    };
+
+    self.makeRoom = (socketid) => {
+        if (!self.logined(socketid)) return false;
+        if (self.connected[socketid].room) return false;
+        let roomid = uniqid();
+        self.connected[socketid].socket.join(roomid);
+        self.connected[socketid].roomid = roomid;
+        self.room[roomid] = {
+            ids: {},
+            count: 1
+        };
+        self.room[roomid].ids[socketid] = true;
+        return true;
+    };
+
+    self.getRooms = () => {
+        let res = {};
+        for (let i in self.room) {
+            res[i] = {
+                count: self.room[i].count,
+            }
+        }
+        return res;
+    };
+
+    self.joinRoom = (socketid, roomid) => {
+        if (!self.logined(socketid)) return false;
+        if (!self.room[roomid]) return false;
+        if (self.connected[socketid].room) return false;
+        self.connected[socketid].socket.join(roomid);
+        self.connected[socketid].roomid = roomid;
+        self.room[roomid].ids[socketid] = true;
+        self.room[roomid].count++;
+        return true;
+    };
+
+    self.leaveRoom = (socketid) => {
+        if (!self.logined(socketid)) return false;
+        if (!self.connected[socketid].room) return false;
+        let roomid = self.connected[socketid].roomid;
+        if (!self.room[roomid]) return false;
+        self.room[roomid].ids[socketid] = undefined;
+        self.room[roomid].count--;
+        if (self.room[roomid].count === 0) {
+            self.room[roomid] = undefined;
+        }
+        self.connected[socketid].roomid = undefined;
+        self.connected[socketid].socket.leave(roomid, err => {
+        });
     };
 
     return self;
