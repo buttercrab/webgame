@@ -187,15 +187,68 @@ let keyOn = {};
 
 function setup() {
     createCanvas(window.innerWidth, window.innerHeight);
+    document.getElementById('defaultCanvas0').style.position = 'absolute';
+    createDiv(
+        '    <div class="form-structor">\n' +
+        '        <div class="signup">\n' +
+        '            <h2 class="form-title" id="signup"><span>or</span>Sign up</h2>\n' +
+        '            <div class="form-holder">\n' +
+        '                <input type="username" class="input" placeholder="Username"/>\n' +
+        '                <input type="password" class="input" placeholder="Password"/>\n' +
+        '                <input type="password" class="input" placeholder="Confirm"/>\n' +
+        '            </div>\n' +
+        '            <button class="submit-btn">Sign up</button>\n' +
+        '            <div class="form-guest">or login as <a class="form-click">Guest</a></div>\n' +
+        '        </div>\n' +
+        '        <div class="login slide-up">\n' +
+        '            <div class="center">\n' +
+        '                <h2 class="form-title" id="login"><span>or</span>Log in</h2>\n' +
+        '                <div class="form-holder">\n' +
+        '                    <input type="username" class="input" placeholder="Username"/>\n' +
+        '                    <input type="password" class="input" placeholder="Password"/>\n' +
+        '                </div>\n' +
+        '                <button class="submit-btn">Log in</button>\n' +
+        '            </div>\n' +
+        '        </div>\n' +
+        '    </div>'
+    );
+
+    const loginBtn = document.getElementById('login');
+    const signupBtn = document.getElementById('signup');
+
+    loginBtn.addEventListener('click', (e) => {
+        let parent = e.target.parentNode.parentNode;
+        Array.from(e.target.parentNode.parentNode.classList).find((element) => {
+            if (element !== "slide-up") {
+                parent.classList.add('slide-up')
+            } else {
+                signupBtn.parentNode.classList.add('slide-up')
+                parent.classList.remove('slide-up')
+            }
+        });
+    });
+
+    signupBtn.addEventListener('click', (e) => {
+        let parent = e.target.parentNode;
+        Array.from(e.target.parentNode.classList).find((element) => {
+            if (element !== "slide-up") {
+                parent.classList.add('slide-up')
+            } else {
+                loginBtn.parentNode.parentNode.classList.add('slide-up')
+                parent.classList.remove('slide-up')
+            }
+        });
+    });
 }
 
 function draw() {
     if (width !== window.innerWidth || height !== window.innerHeight)
         createCanvas(window.innerWidth, window.innerHeight);
-    background('rgb(255, 255, 255)');
+    background('#aaa');
 }
 
 ///===========
+
 
 document.addEventListener('keydown', evt => {
     peer.send(JSON.stringify({type: 'keydown', key: evt.code, time: new Date().getTime()}));

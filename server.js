@@ -53,14 +53,22 @@ function server(certs) {
         fs.createReadStream(__dirname + '/public/src/index.html').pipe(res);
     });
 
-    app.get('/source.js', (req, res) => {
+    app.get('/public/source.js', (req, res) => {
         res.statusCode = 200;
         res.setHeader('content-type', 'application/javascript');
         fs.createReadStream(__dirname + '/public/src/source.js').pipe(res);
     });
 
-    app.get('/favicon.ico', (req, res) => {
-        res.statusCode = 404;
+    app.get('/public/lib/p5.scenemanager.js', (req, res) => {
+        res.statusCode = 200;
+        res.setHeader('content-type', 'application/javascript');
+        fs.createReadStream(__dirname + '/public/library/p5.scenemanager.js').pipe(res);
+    });
+
+    app.get('/public/img/favicon.ico', (req, res) => {
+        res.statusCode = 200;
+        res.setHeader('content-type', 'image/png');
+        fs.createReadStream(__dirname + '/public/favicon/favicon.ico').pipe(res);
     });
 
     app.get('*', (req, res) => {

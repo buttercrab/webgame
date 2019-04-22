@@ -8,7 +8,7 @@
 // Author: Marian Veteanu
 // http://github.com/mveteanu
 //
-function SceneManager(p)
+function P5Scenemanager(p)
 {
     this.scenes = [];
     this.scene = null;
