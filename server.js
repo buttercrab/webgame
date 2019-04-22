@@ -98,19 +98,33 @@ function server(certs) {
         });
 
         socket.on('login', msg => {
-            socket.emit('login', user.login(socket.id, msg.id, msg.pw));
+            // Set time delay to 1 second for spamming
+            setTimeout(() => {
+                socket.emit('login', user.login(socket.id, msg.id, msg.pw));
+            }, 1000);
+        });
+
+        socket.on('logined', () => {
+            socket.emit('logined', user.logined(socket.id));
         });
 
         socket.on('register', msg => {
-            socket.emit('register', user.register(socket.id, msg.id, msg.pw));
+            // Set time delay to 1 second for spamming
+            setTimeout(() => {
+                socket.emit('register', user.register(socket.id, msg.id, msg.pw));
+            }, 1000);
+        });
+
+        socket.on('delete-user', msg => {
+            socket.emit('delete-user', user.deleteUser(socket.id, msg.id, msg.pw));
         });
 
         socket.on('getRooms', () => {
-            socket.emit('getRooms', user.getRooms());
+            socket.emit('rooms', user.getRooms());
         });
 
-        socket.on('makeRoom', () => {
-            socket.emit('makeRoom', user.makeRoom(socket.id));
+        socket.on('makeRoom', name => {
+            socket.emit('makeRoom', user.makeRoom(socket.id, name));
         });
 
         socket.on('joinRoom', roomid => {

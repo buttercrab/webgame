@@ -26,7 +26,8 @@ socket.on('signal', msg => {
     peer.signal(msg.signal);
 });
 
-peer.on('connect', () => {
+peer.on('connection', () => {
+    console.log('connections');
     peer.send(JSON.stringify({
         type: 'heartbeat'
     }));
@@ -36,24 +37,6 @@ socket.on('heartbeat', () => {
     setTimeout(() => {
         socket.emit('heartbeat');
     }, 10000);
-});
-
-socket.on('disconnect', () => {
-    peer = new SimplePeer({
-        initiator: true,
-        trickle: false,
-        reconnectTimer: 5000,
-        iceTransportPolicy: 'relay',
-        config: {
-            iceServers: [
-                {
-                    urls: "turn:buttercrab.ml:8888",
-                    username: "buttercrab",
-                    credential: "1234"
-                }
-            ]
-        }
-    })
 });
 
 function hexString(buffer) {
@@ -93,25 +76,109 @@ function register(id, pw) {
     });
 }
 
+function deleteUser(id, pw) {
+    digestMessage(pw).then(value => {
+        socket.emit('delete-user', {
+            id: id,
+            pw: hexString(value)
+        });
+    })
+}
+
+function makeRoom(name) {
+    socket.emit('makeRoom', name);
+}
+
+function joinRoom(roomid) {
+    socket.emit('joinRoom', roomid);
+}
+
+function leaveRoom() {
+    socket.emit('leaveRoom');
+}
+
+let roomData = {};
+
+function applyRooms() {
+    console.log(roomData);
+}
+
+function getRooms() {
+    socket.emit('getRooms');
+}
+
+socket.on('rooms', rooms => {
+    roomData = rooms;
+    applyRooms();
+});
+
 socket.on('login', msg => {
-    if(msg) {
+    if (msg) {
         //TODO: login success
-        console.log(1);
     } else {
         //login failed
-        console.log(2);
     }
 });
 
 socket.on('register', msg => {
-    if(msg) {
+    if (msg) {
         //TODO: register success
-        console.log(3);
     } else {
         //register failed
-        console.log(4);
     }
 });
+
+socket.on('delete-user', msg => {
+    if (msg) {
+        //TODO: success
+    } else {
+        // failed
+    }
+});
+
+socket.on('getRooms', msg => {
+    if (msg) {
+        //TODO: success
+    } else {
+        // failed
+    }
+});
+
+socket.on('makeRoom', msg => {
+    if (msg) {
+        //TODO: success
+    } else {
+        // failed
+    }
+});
+
+socket.on('joinRoom', msg => {
+    if (msg) {
+        //TODO: success
+    } else {
+        // failed
+    }
+});
+
+socket.on('leaveRoom', msg => {
+    if (msg) {
+        //TODO: success
+    } else {
+        // failed
+    }
+});
+
+socket.on('logined', msg => {
+    if (msg) {
+        //TODO: success
+    } else {
+        // failed
+    }
+});
+
+///==========
+
+
 
 ///==========
 
@@ -120,29 +187,12 @@ let keyOn = {};
 
 function setup() {
     createCanvas(window.innerWidth, window.innerHeight);
-    x = width / 2;
-    y = height / 2;
 }
 
 function draw() {
     if (width !== window.innerWidth || height !== window.innerHeight)
         createCanvas(window.innerWidth, window.innerHeight);
     background('rgb(255, 255, 255)');
-    fill('rgb(255, 255, 255)');
-    stroke('rgb(105,91,255)');
-    strokeWeight(10);
-    rect(0, 0, width, height);
-    fill('rgb(0, 0, 0)');
-    ellipse(x, y, 30, 30);
-
-    if (keyOn['KeyW'])
-        y -= 5;
-    if (keyOn['KeyA'])
-        x -= 5;
-    if (keyOn['KeyS'])
-        y += 5;
-    if (keyOn['KeyD'])
-        x += 5;
 }
 
 ///===========
@@ -157,16 +207,15 @@ document.addEventListener('keyup', evt => {
 
 peer.on('data', msg => {
     const data = JSON.parse(msg);
-    switch(data.type) {
+    switch (data.type) {
         case 'keyup':
             keyOn[data.key] = false;
-            console.log((new Date().getTime() - data.time) + 'ms was delayed');
             break;
 
         case 'keydown':
             keyOn[data.key] = true;
-            console.log((new Date().getTime() - data.time) + 'ms was delayed');
             break;
+
         case 'heartbeat':
             setTimeout(() => {
                 peer.send(JSON.stringify({

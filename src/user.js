@@ -4,10 +4,11 @@ const Peer = require('simple-peer');
 const wrtc = require('wrtc');
 const uniqid = require('uniqid');
 
-module.exports = () => {
+module.exports = (io) => {
     const self = this;
+    self.io = io;
     self.userData = JSON.parse(fs.readFileSync(__dirname + '/../data/user.json').toString());
-    self.connected = {};
+    self.connections = {};
     self.room = {};
 
     self.saveUserData = () => {
@@ -18,13 +19,13 @@ module.exports = () => {
         if (!self.userData[id]) return false;
         for (let i = 0, t = Math.floor(new Date().getTime() / 1000); i < 60; i++, t--) {
             if (crypto.createHash('sha256').update(self.userData[id].pw + t).digest('hex') === hashed) {
-                self.connected[socketid].logined = true;
-                self.connected[socketid].isGuest = false;
-                self.connected[socketid].id = id;
+                self.connections[socketid].logined = true;
+                self.connections[socketid].isGuest = false;
+                self.connections[socketid].id = id;
 
-                self.connected[socketid].socket.handshake.session.userid = id;
-                self.connected[socketid].socket.handshake.session.pw = self.userData[id].pw;
-                self.connected[socketid].socket.handshake.session.save();
+                self.connections[socketid].socket.handshake.session.userid = id;
+                self.connections[socketid].socket.handshake.session.pw = self.userData[id].pw;
+                self.connections[socketid].socket.handshake.session.save();
 
                 return true;
             }
@@ -39,25 +40,25 @@ module.exports = () => {
         };
         self.saveUserData();
 
-        self.connected[socketid].logined = true;
-        self.connected[socketid].isGuest = false;
-        self.connected[socketid].id = id;
+        self.connections[socketid].logined = true;
+        self.connections[socketid].isGuest = false;
+        self.connections[socketid].id = id;
 
-        self.connected[socketid].socket.handshake.session.userid = id;
-        self.connected[socketid].socket.handshake.session.pw = hashed;
-        self.connected[socketid].socket.handshake.session.save();
+        self.connections[socketid].socket.handshake.session.userid = id;
+        self.connections[socketid].socket.handshake.session.pw = hashed;
+        self.connections[socketid].socket.handshake.session.save();
 
         return true;
     };
 
     self.logined = (socketid) => {
-        if (!self.connected.hasOwnProperty(socketid)) return false;
-        return self.connected[socketid].logined || self.connected[socketid].isGuest;
+        if (!self.connections.hasOwnProperty(socketid)) return false;
+        return self.connections[socketid].logined || self.connections[socketid].isGuest;
     };
 
     self.connect = (socket) => {
-        if (self.connected[socket.id]) return false;
-        self.connected[socket.id] = {
+        if (self.connections[socket.id]) return false;
+        self.connections[socket.id] = {
             logined: false,
             isGuest: false,
             peer: new Peer({
@@ -81,66 +82,86 @@ module.exports = () => {
         if (self.userData[socket.handshake.session.userid] &&
             self.userData[socket.handshake.session.userid].pw === socket.handshake.session.pw) {
 
-            self.connected[socket.id].logined = true;
-            self.connected[socket.id].isGuest = false;
-            self.connected[socket.id].id = socket.handshake.session.userid;
+            self.connections[socket.id].logined = true;
+            self.connections[socket.id].isGuest = false;
+            self.connections[socket.id].id = socket.handshake.session.userid;
         }
 
-        self.connected[socket.id].peer.on('error', err => {
-            console.log(err);
+        self.connections[socket.id].peer.on('error', err => {
+            console.log(`Ice connection failed. id: ${self.connections[socket.id].id || socket.id} reconnecting...`);
+            self.connections[socket.id].peer.reconnect();
         });
 
-        self.connected[socket.id].peer.on('signal', data => {
+        self.connections[socket.id].peer.on('signal', data => {
             socket.emit('signal', {
                 signal: data
             });
         });
 
-        self.connected[socket.id].peer.on('data', msg => {
+        self.connections[socket.id].peer.on('data', msg => {
             const data = JSON.parse(msg);
             if (data.type === 'heartbeat') {
-                self.connected[socket.id].peer.send(JSON.stringify({
+                self.connections[socket.id].peer.send(JSON.stringify({
                     type: 'heartbeat'
                 }));
             } else {
-                self.connected[socket.id].peer.send(msg);
+                self.connections[socket.id].peer.send(msg);
             }
         });
 
         socket.on('signal', msg => {
-            self.connected[socket.id].peer.signal(msg.signal);
+            self.connections[socket.id].peer.signal(msg.signal);
         });
 
         return true;
     };
 
     self.disconnect = (socketid) => {
-        if (!self.connected[socketid]) return false;
+        if (!self.connections[socketid]) return false;
         self.leaveRoom(socketid);
-        self.connected[socketid].peer.destroy();
-        self.connected[socketid] = undefined;
+        self.connections[socketid].peer.destroy();
+        delete self.connections[socketid];
         return true;
     };
 
-    self.makeRoom = (socketid) => {
+    self.deleteUser = (socketid, id, pw) => {
         if (!self.logined(socketid)) return false;
-        if (self.connected[socketid].room) return false;
+        if (pw !== self.userData[self.connections[socketid].id]) return false;
+        delete self.connections[socketid].socket.handshake.session.userid;
+        delete self.connections[socketid].socket.handshake.session.pw;
+        self.connections[socketid].socket.handshake.session.save();
+        self.connections[socketid].logined = false;
+        delete self.userData[self.connections[socketid].id];
+        return true;
+    };
+
+    self.makeRoom = (socketid, name) => {
+        if (!self.logined(socketid)) return false;
+        if (self.connections[socketid].room) return false;
         let roomid = uniqid();
-        self.connected[socketid].socket.join(roomid);
-        self.connected[socketid].roomid = roomid;
+        self.connections[socketid].socket.join(roomid);
+        self.connections[socketid].roomid = roomid;
         self.room[roomid] = {
             ids: {},
-            count: 1
+            count: 1,
+            name: name
         };
-        self.room[roomid].ids[socketid] = true;
+        self.room[roomid].ids[socketid] = true; // true for room head false for else
+        self.io.emit('rooms', self.getRooms());
         return true;
     };
 
     self.getRooms = () => {
         let res = {};
         for (let i in self.room) {
+            let users = {};
+            for (let j in self.room[i].ids)
+                users[self.connections[j].id] = self.room[i].ids[j];
             res[i] = {
                 count: self.room[i].count,
+                users: users,
+                name: self.room[i].name,
+                roomid: i
             }
         }
         return res;
@@ -149,27 +170,31 @@ module.exports = () => {
     self.joinRoom = (socketid, roomid) => {
         if (!self.logined(socketid)) return false;
         if (!self.room[roomid]) return false;
-        if (self.connected[socketid].room) return false;
-        self.connected[socketid].socket.join(roomid);
-        self.connected[socketid].roomid = roomid;
-        self.room[roomid].ids[socketid] = true;
+        if (self.connections[socketid].roomid) return false;
+        self.connections[socketid].socket.join(roomid);
+        self.connections[socketid].roomid = roomid;
+        self.room[roomid].ids[socketid] = false;
         self.room[roomid].count++;
+        self.io.emit('rooms', self.getRooms());
         return true;
     };
 
     self.leaveRoom = (socketid) => {
         if (!self.logined(socketid)) return false;
-        if (!self.connected[socketid].room) return false;
-        let roomid = self.connected[socketid].roomid;
+        if (!self.connections[socketid].roomid) return false;
+        let roomid = self.connections[socketid].roomid;
         if (!self.room[roomid]) return false;
-        self.room[roomid].ids[socketid] = undefined;
+        if (self.room[roomid].ids[socketid]) {
+            delete self.room[roomid].ids[socketid];
+            self.room[roomid].ids[Object.keys(self.room[roomid].ids)[0]] = true;
+        } else self.room[roomid].ids[socketid] = undefined;
         self.room[roomid].count--;
-        if (self.room[roomid].count === 0) {
-            self.room[roomid] = undefined;
-        }
-        self.connected[socketid].roomid = undefined;
-        self.connected[socketid].socket.leave(roomid, err => {
+        if (self.room[roomid].count === 0) delete self.room[roomid];
+        delete self.connections[socketid].roomid;
+        self.connections[socketid].socket.leave(roomid, err => {
         });
+        self.io.emit('rooms', self.getRooms());
+        return true;
     };
 
     return self;
