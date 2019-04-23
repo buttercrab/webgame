@@ -59,6 +59,12 @@ function server(certs) {
         fs.createReadStream(__dirname + '/public/src/source.js').pipe(res);
     });
 
+    app.get('/public/login.js', (req, res) => {
+        res.statusCode = 200;
+        res.setHeader('content-type', 'application/javascript');
+        fs.createReadStream(__dirname + '/public/src/login.js').pipe(res);
+    });
+
     app.get('/public/lib/p5.scenemanager.js', (req, res) => {
         res.statusCode = 200;
         res.setHeader('content-type', 'application/javascript');
@@ -106,10 +112,7 @@ function server(certs) {
         });
 
         socket.on('login', msg => {
-            // Set time delay to 1 second for spamming
-            setTimeout(() => {
-                socket.emit('login', user.login(socket.id, msg.id, msg.pw));
-            }, 1000);
+            socket.emit('login', user.login(socket.id, msg.id, msg.pw));
         });
 
         socket.on('logined', () => {
@@ -117,10 +120,7 @@ function server(certs) {
         });
 
         socket.on('register', msg => {
-            // Set time delay to 1 second for spamming
-            setTimeout(() => {
-                socket.emit('register', user.register(socket.id, msg.id, msg.pw));
-            }, 1000);
+            socket.emit('register', user.register(socket.id, msg.id, msg.pw));
         });
 
         socket.on('delete-user', msg => {

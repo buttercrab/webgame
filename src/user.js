@@ -33,6 +33,10 @@ module.exports = (io) => {
         return false;
     };
 
+    self.loginGuest = (socketid) => {
+        
+    };
+
     self.register = (socketid, id, hashed) => {
         if (self.userData[id]) return false;
         self.userData[id] = {

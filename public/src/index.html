@@ -27,10 +27,6 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        #start-screen-wrap {
-            background: #222;
-        }
-
         .form-structor {
             background: #222;
             border-radius: 15px;
@@ -90,7 +86,7 @@
         }
 
         .form-structor .signup .form-title span {
-            color: rgba(0, 0, 0, 0.4);
+            color: rgba(255, 255, 255, 0.4);
             opacity: 0;
             visibility: hidden;
             -webkit-transition: all 0.3s ease;
@@ -296,16 +292,23 @@
         }
 
         .form-structor .signup .form-click:hover {
+            transition: all 0.3s ease;
+            -webkit-transition: all 0.3s ease;
             cursor: pointer;
             color: #7c8aff;
         }
-
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/p5.min.js" type="application/javascript"></script>
     <script src="https://buttercrab.ml/public/lib/p5.scenemanager.js" type="application/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.dom.min.js" type="application/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/simple-peer/9.3.0/simplepeer.min.js" type="application/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.slim.js" type="application/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.dom.min.js"
+            type="application/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simple-peer/9.3.0/simplepeer.min.js"
+            type="application/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.slim.js"
+            type="application/javascript"></script>
+    <div class="norender">
+        <script src="https://buttercrab.ml/public/login.js" type="application/javascript"></script>
+    </div>
     <script src="https://buttercrab.ml/public/source.js" type="application/javascript"></script>
 </head>
 <body>
