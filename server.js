@@ -37,8 +37,6 @@ new Turn({
     listeningIps: ['192.168.0.100']
 }).start();
 
-let connections = {};
-
 function server(certs) {
     const port = 8443;
     const app = require('express')();
@@ -106,6 +104,8 @@ function server(certs) {
     io.on('connection', socket => {
         user.connect(socket);
 
+        socket.emit('logined', user.logined(socket.id));
+
         socket.emit('heartbeat');
         socket.on('heartbeat', () => {
             socket.emit('heartbeat');
@@ -115,12 +115,21 @@ function server(certs) {
             socket.emit('login', user.login(socket.id, msg.id, msg.pw));
         });
 
+        socket.on('logout', () => {
+            socket.emit('logout', user.logout(socket.id));
+        });
+
+        socket.on('login-guest', name => {
+            user.loginGuest(socket.id, name);
+            socket.emit('logined', user.logined(socket.id));
+        });
+
         socket.on('logined', () => {
             socket.emit('logined', user.logined(socket.id));
         });
 
         socket.on('register', msg => {
-            socket.emit('register', user.register(socket.id, msg.id, msg.pw));
+            socket.emit('register', user.register(socket.id, msg.id, msg.nm, msg.pw));
         });
 
         socket.on('delete-user', msg => {
@@ -128,19 +137,19 @@ function server(certs) {
         });
 
         socket.on('getRooms', () => {
-            socket.emit('rooms', user.getRooms());
+            user.getRooms();
         });
 
         socket.on('makeRoom', name => {
-            socket.emit('makeRoom', user.makeRoom(socket.id, name));
+            user.makeRoom(socket.id, name);
         });
 
         socket.on('joinRoom', roomid => {
-            socket.emit('joinRoom', user.joinRoom(socket.id, roomid));
+            user.joinRoom(socket.id, roomid);
         });
 
         socket.on('leaveRoom', () => {
-            socket.emit('leaveRoom', user.leaveRoom(socket.id));
+            user.leaveRoom(socket.id);
         });
 
         socket.on('disconnect', () => {

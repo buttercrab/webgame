@@ -11,7 +11,7 @@ module.exports = (io) => {
     self.connections = {};
     self.room = {};
 
-    self.saveUserData = () => {
+    self.saveUserData = async () => {
         fs.writeFileSync(__dirname + '/../data/user.json', JSON.stringify(self.userData));
     };
 
@@ -22,6 +22,7 @@ module.exports = (io) => {
                 self.connections[socketid].logined = true;
                 self.connections[socketid].isGuest = false;
                 self.connections[socketid].id = id;
+                self.connections[socketid].name = self.userData[id].nm;
 
                 self.connections[socketid].socket.handshake.session.userid = id;
                 self.connections[socketid].socket.handshake.session.pw = self.userData[id].pw;
@@ -33,13 +34,29 @@ module.exports = (io) => {
         return false;
     };
 
-    self.loginGuest = (socketid) => {
-        
+    self.loginGuest = (socketid, name) => {
+        self.connections[socketid].logined = false;
+        self.connections[socketid].isGuest = true;
+        self.connections[socketid].id = uniqid('Guest-');
+        self.connections[socketid].name = name;
     };
 
-    self.register = (socketid, id, hashed) => {
+    self.logout = (socketid) => {
+        if(!self.logined(socketid)) return false;
+        self.connections[socketid].logined = false;
+        self.connections[socketid].isGuest = false;
+        delete self.connections[socketid].id;
+        delete self.connections[socketid].name;
+        delete self.connections[socketid].socket.handshake.session.userid;
+        delete self.connections[socketid].socket.handshake.session.pw;
+        self.connections[socketid].socket.handshake.session.save();
+        return true;
+    };
+
+    self.register = (socketid, id, nm, hashed) => {
         if (self.userData[id]) return false;
         self.userData[id] = {
+            nm: nm,
             pw: hashed
         };
         self.saveUserData();
@@ -103,7 +120,12 @@ module.exports = (io) => {
         });
 
         self.connections[socket.id].peer.on('data', msg => {
-            const data = JSON.parse(msg);
+            let data;
+            try {
+                data = JSON.parse(msg);
+            } catch (e) {
+                return;
+            }
             if (data.type === 'heartbeat') {
                 self.connections[socket.id].peer.send(JSON.stringify({
                     type: 'heartbeat'
@@ -140,8 +162,8 @@ module.exports = (io) => {
     };
 
     self.makeRoom = (socketid, name) => {
-        if (!self.logined(socketid)) return false;
-        if (self.connections[socketid].room) return false;
+        if (!self.logined(socketid)) return;
+        if (self.connections[socketid].room) return;
         let roomid = uniqid();
         self.connections[socketid].socket.join(roomid);
         self.connections[socketid].roomid = roomid;
@@ -151,8 +173,6 @@ module.exports = (io) => {
             name: name
         };
         self.room[roomid].ids[socketid] = true; // true for room head false for else
-        self.io.emit('rooms', self.getRooms());
-        return true;
     };
 
     self.getRooms = () => {
@@ -172,22 +192,20 @@ module.exports = (io) => {
     };
 
     self.joinRoom = (socketid, roomid) => {
-        if (!self.logined(socketid)) return false;
-        if (!self.room[roomid]) return false;
-        if (self.connections[socketid].roomid) return false;
+        if (!self.logined(socketid)) return;
+        if (!self.room[roomid]) return;
+        if (self.connections[socketid].roomid) return;
         self.connections[socketid].socket.join(roomid);
         self.connections[socketid].roomid = roomid;
         self.room[roomid].ids[socketid] = false;
         self.room[roomid].count++;
-        self.io.emit('rooms', self.getRooms());
-        return true;
     };
 
     self.leaveRoom = (socketid) => {
-        if (!self.logined(socketid)) return false;
-        if (!self.connections[socketid].roomid) return false;
+        if (!self.logined(socketid)) return;
+        if (!self.connections[socketid].roomid) return;
         let roomid = self.connections[socketid].roomid;
-        if (!self.room[roomid]) return false;
+        if (!self.room[roomid]) return;
         if (self.room[roomid].ids[socketid]) {
             delete self.room[roomid].ids[socketid];
             self.room[roomid].ids[Object.keys(self.room[roomid].ids)[0]] = true;
@@ -197,8 +215,13 @@ module.exports = (io) => {
         delete self.connections[socketid].roomid;
         self.connections[socketid].socket.leave(roomid, err => {
         });
-        self.io.emit('rooms', self.getRooms());
-        return true;
+    };
+
+    self.notify = (title, msg) => {
+        self.io.emit('notice', {
+            title: title,
+            msg: msg
+        });
     };
 
     return self;
