@@ -1,3 +1,13 @@
+/**
+ * WebGame made by Jaeyong Sung
+ */
+
+/**
+ * @module greenlock
+ * @url https://buttercrab.ml
+ * @description ssl configuration for website
+ */
+
 const lex = require('greenlock').create({
     version: 'draft-12',
     server: 'https://acme-v02.api.letsencrypt.org/directory',
@@ -13,6 +23,12 @@ const expressSession = require('express-session');
 const sharedSession = require('express-socket.io-session');
 const FileStore = require('session-file-store')(expressSession);
 
+/**
+ * @module express-session
+ * @description session configuration
+ * @type {session}
+ */
+
 const session = expressSession({
     secret: 'f392h*32@usfeo{]a]]|',
     resave: true,
@@ -22,12 +38,14 @@ const session = expressSession({
 });
 
 /**
- * Turn Server for p2p connection
- *
+ * @module node-turn
+ * @url turn:buttercrab.ml:1234
+ * @description Turn Server for p2p connection
  * @port 8888
  * @username buttercrab
  * @password 1234
  */
+
 new Turn({
     authMech: 'long-term',
     credentials: {
@@ -36,6 +54,14 @@ new Turn({
     listeningPort: 8888,
     listeningIps: ['192.168.0.100']
 }).start();
+
+/**
+ * @function server
+ * @description main function to serve website
+ * @port 8080 forwarded to 80 for http server
+ * @port 8443 forwarded to 443 for https(spdy) server
+ * @param certs: certification for ssl
+ */
 
 function server(certs) {
     const port = 8443;
@@ -95,7 +121,6 @@ function server(certs) {
 
     const io = require('socket.io')(server);
     const user = require('./src/user.js')(io);
-    const util = require('./src/util.js')();
 
     io.use(sharedSession(session, {
         autoSave: true
@@ -137,7 +162,7 @@ function server(certs) {
         });
 
         socket.on('getRooms', () => {
-            user.getRooms();
+            socket.emit('getRooms', user.getRooms());
         });
 
         socket.on('makeRoom', name => {
@@ -157,6 +182,10 @@ function server(certs) {
         });
     });
 }
+
+/**
+ * @description checking certification that has been saved
+ */
 
 lex.check({domains: ['buttercrab.ml']}).then(res => {
     if (res) {

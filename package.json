@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "run": "nodemon server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "ready": "concurrently \"mkdir sessions\" \"mkdir data\" \"echo '{}' >> data/user.json\""
   },
   "keywords": [],
   "author": "jaeyong sung",
@@ -26,7 +27,6 @@
     "simple-peer": "^9.3.0",
     "socket.io": "^2.2.0",
     "spdy": "^4.0.0",
-    "uid-generator": "^1.0.0",
     "uniqid": "^5.0.3",
     "wrtc": "^0.3.7"
   },
@@ -36,5 +36,8 @@
       "sessions/*",
       "data/*"
     ]
+  },
+  "devDependencies": {
+    "concurrently": "^4.1.0"
   }
 }

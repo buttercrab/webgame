@@ -53,6 +53,17 @@ function draw() {
     background('#aaa');
 }
 
+function Intro() {
+
+    this.setup = () => {
+
+    };
+
+    this.draw = () => {
+
+    };
+}
+
 ///===========
 
 peer.on('data', msg => {

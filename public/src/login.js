@@ -54,6 +54,7 @@ function register(id, nm, pw) {
             pw: hexString(value)
         });
     });
+    start_loading();
 }
 
 function deleteUser(id, pw) {
@@ -124,18 +125,16 @@ socket.on('register', msg => {
 
 socket.on('delete-user', msg => {
     if (msg) {
-        //TODO: success
+        logined = false;
+        setSize(window.innerWidth, window.innerHeight);
     } else {
-        // failed
+        delete_user_failed();
+        // TODO
     }
 });
 
-socket.on('getRooms', msg => {
-    if (msg) {
-        //TODO: success
-    } else {
-        // failed
-    }
+socket.on('getRooms', data => {
+    roomData = data;
 });
 
 socket.on('refresh', () => {
