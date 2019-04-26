@@ -66,7 +66,7 @@ new Turn({
 function server(certs) {
     const port = 8443;
     const app = require('express')();
-    app.use(require('morgan')('dev'));
+    // app.use(require('morgan')('dev'));
     app.use(session);
 
     app.enable('trust proxy');
@@ -77,39 +77,36 @@ function server(certs) {
         fs.createReadStream(__dirname + '/public/src/index.html').pipe(res);
     });
 
-    app.get('/public/connection.js', (req, res) => {
-        res.statusCode = 200;
-        res.setHeader('content-type', 'application/javascript');
-        fs.createReadStream(__dirname + '/public/src/connection.js').pipe(res);
+    app.get('/public/font', (req, res) => {
+        res.statusCode = 404;
+        if (!req.query.fontName || !req.query.fontFamily)
+            return;
+        const stream = fs.createReadStream(__dirname + '/public/font/' + req.query.fontName + '/' + req.query.fontName + '-' + req.query.fontFamily + '.ttf');
+
+        stream.on('open', () => {
+            res.statusCode = 200;
+            stream.pipe(res);
+        });
+
+        stream.on('error', err => {
+            res.statusCode = 404;
+        });
     });
 
-    app.get('/public/login.js', (req, res) => {
-        res.statusCode = 200;
-        res.setHeader('content-type', 'application/javascript');
-        fs.createReadStream(__dirname + '/public/src/login.js').pipe(res);
-    });
+    app.get('/public/:dir/:file', (req, res) => {
+        res.statusCode = 404;
+        if (!req.params.file || !req.params.dir)
+            return;
+        const stream = fs.createReadStream(__dirname + '/public/' + req.params.dir + '/' + req.params.file);
 
-    app.get('/public/sketch.js', (req, res) => {
-        res.statusCode = 200;
-        res.setHeader('content-type', 'application/javascript');
-        fs.createReadStream(__dirname + '/public/src/sketch.js').pipe(res);
-    });
+        stream.on('open', () => {
+            res.statusCode = 200;
+            stream.pipe(res);
+        });
 
-    app.get('/public/lib/p5.scenemanager.js', (req, res) => {
-        res.statusCode = 200;
-        res.setHeader('content-type', 'application/javascript');
-        fs.createReadStream(__dirname + '/public/library/p5.scenemanager.js').pipe(res);
-    });
-
-    app.get('/public/img/favicon.ico', (req, res) => {
-        res.statusCode = 200;
-        res.setHeader('content-type', 'image/png');
-        fs.createReadStream(__dirname + '/public/favicon/favicon.ico').pipe(res);
-    });
-
-    app.get('/font/:filename', (req, res) => {
-        res.statusCode = 200;
-        fs.createReadStream(__dirname + '')
+        stream.on('error', err => {
+            res.statusCode = 404;
+        });
     });
 
     app.get('*', (req, res) => {
@@ -153,7 +150,7 @@ function server(certs) {
         });
 
         socket.on('logout', () => {
-            const logouted = user.login(socket.id, msg.id, msg.pw);
+            const logouted = user.logout(socket.id);
             socket.emit('logout', logouted);
         });
 

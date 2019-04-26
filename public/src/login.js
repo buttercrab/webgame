@@ -1,5 +1,6 @@
 
 let logined = undefined, roomData = {}, loginViewState = 0;
+let registerFailMsg = "", loginFailMsg = "";
 
 socket.on('heartbeat', () => {
     setTimeout(() => {
@@ -152,18 +153,20 @@ socket.on('refresh', () => {
 ///==========
 
 function login_failed(code) {
-    let msg = '';
     switch (code) {
         case 1:
-            msg = 'Username Required';
+            loginFailMsg = '<div class="fail-msg">Username Required</div>';
             break;
         case 2:
-            msg = 'Password Required';
+            loginFailMsg = '<div class="fail-msg">Password Required</div>';
             break;
         case 3:
-            msg = 'Wrong Username or Password';
+            loginFailMsg = '<div class="fail-msg">Wrong Username or Password</div>';
             break;
+        default:
+            loginFailMsg = '';
     }
+    setSize(window.innerWidth, window.innerHeight);
 }
 
 function login_submit() {
@@ -181,21 +184,23 @@ function login_submit() {
 }
 
 function register_failed(code) {
-    let msg = '';
     switch (code) {
         case 1:
-            msg = 'Username Required';
+            registerFailMsg = '<div class="fail-msg">Username Required</div>';
             break;
         case 2:
-            msg = 'Username Required';
+            registerFailMsg = '<div class="fail-msg">Username Required</div>';
             break;
         case 3:
-            msg = 'Password Required';
+            registerFailMsg = '<div class="fail-msg">Password Required</div>';
             return;
         case 4:
-            msg = 'Username is Used';
+            registerFailMsg = '<div class="fail-msg">Username is Used</div>';
             return;
+        default:
+            registerFailMsg = '';
     }
+    setSize(window.innerWidth, window.innerHeight);
 }
 
 function register_submit() {
@@ -255,6 +260,9 @@ function view_login() {
     loginViewOn = true;
 
     createDiv(
+        '<div class="title">\n' +
+        '    <img src="https://buttercrab.ml/public/img/logo.png" alt="Bang">\n' +
+        '</div>\n' +
         '<div class="form-structor" id="base">\n' +
         '    <div class="signup">\n' +
         '        <h2 class="form-title" id="signup"><span>or</span>Sign up\u00A0\u00A0\u00A0</h2>\n' +
@@ -265,6 +273,7 @@ function view_login() {
         '        </div>\n' +
         '        <button class="submit-btn" id="signup-btn" onclick="register_submit()">Sign up</button>\n' +
         '        <div class="form-guest">or login as <a class="form-click" onclick="login_guest()">Guest</a></div>\n' +
+        registerFailMsg +
         '    </div>\n' +
         '    <div class="login slide-up">\n' +
         '        <div class="center">\n' +
@@ -274,6 +283,7 @@ function view_login() {
         '                <input type="password" class="input" placeholder="Password" id="login-password"/>\n' +
         '            </div>\n' +
         '            <button class="submit-btn" id="login-btn" onclick="login_submit()">Log in</button>\n' +
+        loginFailMsg +
         '        </div>\n' +
         '    </div>\n' +
         '</div>'

@@ -8,4 +8,4 @@ install:
   - mkdir data
   - mkdir sessions
 script:
-  - npm run run
+  - npm run test

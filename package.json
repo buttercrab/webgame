@@ -6,7 +6,8 @@
   "scripts": {
     "run": "nodemon server.js",
     "start": "node server.js",
-    "ready": "concurrently \"mkdir sessions\" \"mkdir data\""
+    "ready": "concurrently \"mkdir sessions\" \"mkdir data\"",
+    "test": "node test.js"
   },
   "keywords": [],
   "author": "jaeyong sung",

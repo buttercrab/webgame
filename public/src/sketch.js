@@ -1,13 +1,15 @@
-
 let x = 0, y = 0;
 let keyOn = {};
 let mgr;
+let mainFont;
 
 function setup() {
     setSize(window.innerWidth, window.innerHeight);
     document.getElementById('defaultCanvas0').style.position = 'absolute';
-    mgr = new SceneManager();
 
+    mainFont = loadFont('https://buttercrab.ml/public/font?fontName=Raleway&fontFamily=Regular');
+
+    mgr = new SceneManager();
     mgr.showScene(Intro);
 }
 
@@ -18,13 +20,18 @@ function draw() {
     mgr.draw();
 }
 
-function Intro() {
+function mousePressed() {
+    mgr.handleEvent('mousePressed');
+}
 
-    this.draw = () => {
-        background('#aaa');
+function mouseReleased() {
+    mgr.handleEvent('mouseReleased');
+}
 
-        if(!logined) return;
+function keyPressed() {
+    mgr.handleEvent('keyPressed');
+}
 
-        
-    };
+function keyReleased() {
+    mgr.handleEvent('keyReleased');
 }

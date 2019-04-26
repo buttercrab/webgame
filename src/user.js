@@ -15,7 +15,7 @@ module.exports = (io) => {
     }
     self.userData = JSON.parse(data);
     self.connections = {};
-    self.logined = {};
+    self.loginedUsers = {};
     self.room = {};
 
     self.saveUserData = async () => {
@@ -24,10 +24,10 @@ module.exports = (io) => {
 
     self.login = (socketid, id, hashed) => {
         if (!self.userData[id]) return false;
-        if (self.logined[id]) return false;
+        if (self.loginedUsers[id]) return false;
         for (let i = 0, t = Math.floor(new Date().getTime() / 1000); i < 60; i++, t--) {
             if (crypto.createHash('sha256').update(self.userData[id].pw + t).digest('hex') === hashed) {
-                self.connections[socketid].logined = true;
+                self.connections[socketid].loginedUsers = true;
                 self.connections[socketid].isGuest = false;
                 self.connections[socketid].id = id;
                 self.connections[socketid].name = self.userData[id].nm;
@@ -36,7 +36,7 @@ module.exports = (io) => {
                 self.connections[socketid].socket.handshake.session.pw = self.userData[id].pw;
                 self.connections[socketid].socket.handshake.session.save();
 
-                self.logined[self.connections[socketid].id] = true;
+                self.loginedUsers[self.connections[socketid].id] = true;
 
                 return true;
             }
@@ -45,7 +45,7 @@ module.exports = (io) => {
     };
 
     self.loginGuest = (socketid, name) => {
-        self.connections[socketid].logined = false;
+        self.connections[socketid].loginedUsers = false;
         self.connections[socketid].isGuest = true;
         self.connections[socketid].id = uniqid('Guest-');
         self.connections[socketid].name = name;
@@ -53,9 +53,9 @@ module.exports = (io) => {
 
     self.logout = (socketid) => {
         if(!self.logined(socketid)) return false;
-        self.connections[socketid].logined = false;
+        self.connections[socketid].loginedUsers = false;
         self.connections[socketid].isGuest = false;
-        self.logined[self.connections[socketid].id] = false;
+        self.loginedUsers[self.connections[socketid].id] = false;
         delete self.connections[socketid].id;
         delete self.connections[socketid].name;
         delete self.connections[socketid].socket.handshake.session.userid;
@@ -72,7 +72,7 @@ module.exports = (io) => {
         };
         self.saveUserData();
 
-        self.connections[socketid].logined = true;
+        self.connections[socketid].loginedUsers = true;
         self.connections[socketid].isGuest = false;
         self.connections[socketid].id = id;
 
@@ -85,7 +85,7 @@ module.exports = (io) => {
 
     self.logined = (socketid) => {
         if (!self.connections.hasOwnProperty(socketid)) return false;
-        return self.connections[socketid].logined || self.connections[socketid].isGuest;
+        return self.connections[socketid].loginedUsers || self.connections[socketid].isGuest;
     };
 
     self.connect = (socket) => {
@@ -114,14 +114,13 @@ module.exports = (io) => {
         if (self.userData[socket.handshake.session.userid] &&
             self.userData[socket.handshake.session.userid].pw === socket.handshake.session.pw) {
 
-            self.connections[socket.id].logined = true;
+            self.connections[socket.id].loginedUsers = true;
             self.connections[socket.id].isGuest = false;
             self.connections[socket.id].id = socket.handshake.session.userid;
         }
 
         self.connections[socket.id].peer.on('error', err => {
             console.log(`Ice connection failed. id: ${self.connections[socket.id].id || socket.id} reconnecting...`);
-            self.connections[socket.id].peer.reconnect();
         });
 
         self.connections[socket.id].peer.on('signal', data => {
@@ -156,7 +155,6 @@ module.exports = (io) => {
     self.disconnect = (socketid) => {
         if (!self.connections[socketid]) return false;
         self.leaveRoom(socketid);
-        self.logout(socketid);
         self.connections[socketid].peer.destroy();
         delete self.connections[socketid];
         return true;
@@ -168,7 +166,7 @@ module.exports = (io) => {
         delete self.connections[socketid].socket.handshake.session.userid;
         delete self.connections[socketid].socket.handshake.session.pw;
         self.connections[socketid].socket.handshake.session.save();
-        self.connections[socketid].logined = false;
+        self.connections[socketid].loginedUsers = false;
         delete self.userData[self.connections[socketid].id];
         return true;
     };
