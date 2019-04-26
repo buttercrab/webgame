@@ -1,7 +1,9 @@
-before_install:
-  - sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
-  - brew install node@10.15.2
+os: osx
+language: node_js
+node_js:
+  - "10"
 install:
+  - npm install npm@6.9.0
   - npm install
   - npm run ready
 script:
