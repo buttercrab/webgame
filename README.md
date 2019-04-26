@@ -1,6 +1,6 @@
 # Webgame
 
-#### [https://buttercrab.ml](https://buttercrab.ml)
+### [https://buttercrab.ml](https://buttercrab.ml)
 
 ## Introduction
 
@@ -15,19 +15,19 @@ The WebGame using `node.js`
 
 First, download the zip file or clone this repository
 
-```bash
+```
 git clone https://github.com/buttercrab/webgame.git
 ```
 
 Then, go into the directory
 
-```bash
+```
 cd webgame
 ```
 
 Then run:
 
-```bash
+```
 npm install
 npm run ready
 ```

@@ -13,14 +13,18 @@ function Intro() {
 
         if(!logined) return;
 
+        push();
+        rectMode(CENTER);
+        noStroke();
+        rect(width/2, height/2, 400, 800, 50);
+
+        push();
         textFont(mainFont);
         textSize(80);
         textAlign(CENTER);
-        push();
-        fill('#fff');
-        text('Bang', width/2, 120);
+        fill('#000');
+        text('Bang', width/2, height/2 - 400 + 80 + 20);
+        pop();
         pop();
     };
-
-
 }
