@@ -37,35 +37,6 @@ peer.on('connection', () => {
     }));
 });
 
-///==========
-
-let x = 0, y = 0;
-let keyOn = {};
-
-function setup() {
-    setSize(window.innerWidth, window.innerHeight);
-    document.getElementById('defaultCanvas0').style.position = 'absolute';
-}
-
-function draw() {
-    if (width !== window.innerWidth || height !== window.innerHeight)
-        setSize(window.innerWidth, window.innerHeight);
-    background('#aaa');
-}
-
-function Intro() {
-
-    this.setup = () => {
-
-    };
-
-    this.draw = () => {
-
-    };
-}
-
-///===========
-
 peer.on('data', msg => {
     const data = JSON.parse(msg);
     switch (data.type) {

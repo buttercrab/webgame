@@ -25,6 +25,8 @@ function digestMessage(message) {
 }
 
 function login(id, pw) {
+    start_loading();
+    logined = undefined;
     digestMessage(pw).then(value => {
         digestMessage(hexString(value) + Math.floor(new Date().getTime() / 1000)).then(hashed => {
             socket.emit('login', {
@@ -36,17 +38,20 @@ function login(id, pw) {
 }
 
 function login_guest(name) {
-    socket.emit('login-guest', name);
     start_loading();
+    logined = undefined;
+    socket.emit('login-guest', name);
 }
 
 function logout() {
+    start_loading();
     socket.emit('logout');
     logined = undefined;
-    start_loading();
 }
 
 function register(id, nm, pw) {
+    start_loading();
+    logined = undefined;
     digestMessage(pw).then(value => {
         socket.emit('register', {
             id: id,
@@ -54,10 +59,11 @@ function register(id, nm, pw) {
             pw: hexString(value)
         });
     });
-    start_loading();
 }
 
 function deleteUser(id, pw) {
+    start_loading();
+    logined = undefined;
     digestMessage(pw).then(value => {
         socket.emit('delete-user', {
             id: id,
@@ -97,6 +103,7 @@ socket.on('login', msg => {
         setSize(window.innerWidth, window.innerHeight);
     } else {
         login_failed(3);
+        socket.emit('logined');
     }
 });
 
@@ -120,6 +127,7 @@ socket.on('register', msg => {
         setSize(window.innerWidth, window.innerHeight);
     } else {
         register_failed(4);
+        socket.emit('logined');
     }
 });
 
@@ -209,8 +217,6 @@ function register_submit() {
     register(id, nm, pw);
 }
 
-///==========
-
 let is_loading = false, loginViewOn = false;
 
 function start_loading() {
@@ -246,6 +252,7 @@ function view_login() {
     removeElements();
 
     loginViewState = 0;
+    loginViewOn = true;
 
     createDiv(
         '<div class="form-structor" id="base">\n' +
@@ -319,8 +326,6 @@ function view_login() {
         if(event.key === 'Enter')login_submit();
     });
 }
-
-///==========
 
 function setSize(w, h) {
     createCanvas(w, h);

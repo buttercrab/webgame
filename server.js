@@ -77,16 +77,22 @@ function server(certs) {
         fs.createReadStream(__dirname + '/public/src/index.html').pipe(res);
     });
 
-    app.get('/public/source.js', (req, res) => {
+    app.get('/public/connection.js', (req, res) => {
         res.statusCode = 200;
         res.setHeader('content-type', 'application/javascript');
-        fs.createReadStream(__dirname + '/public/src/source.js').pipe(res);
+        fs.createReadStream(__dirname + '/public/src/connection.js').pipe(res);
     });
 
     app.get('/public/login.js', (req, res) => {
         res.statusCode = 200;
         res.setHeader('content-type', 'application/javascript');
         fs.createReadStream(__dirname + '/public/src/login.js').pipe(res);
+    });
+
+    app.get('/public/sketch.js', (req, res) => {
+        res.statusCode = 200;
+        res.setHeader('content-type', 'application/javascript');
+        fs.createReadStream(__dirname + '/public/src/sketch.js').pipe(res);
     });
 
     app.get('/public/lib/p5.scenemanager.js', (req, res) => {
@@ -99,6 +105,11 @@ function server(certs) {
         res.statusCode = 200;
         res.setHeader('content-type', 'image/png');
         fs.createReadStream(__dirname + '/public/favicon/favicon.ico').pipe(res);
+    });
+
+    app.get('/font/:filename', (req, res) => {
+        res.statusCode = 200;
+        fs.createReadStream(__dirname + '')
     });
 
     app.get('*', (req, res) => {
@@ -137,11 +148,13 @@ function server(certs) {
         });
 
         socket.on('login', msg => {
-            socket.emit('login', user.login(socket.id, msg.id, msg.pw));
+            const logined = user.login(socket.id, msg.id, msg.pw);
+            socket.emit('login', logined);
         });
 
         socket.on('logout', () => {
-            socket.emit('logout', user.logout(socket.id));
+            const logouted = user.login(socket.id, msg.id, msg.pw);
+            socket.emit('logout', logouted);
         });
 
         socket.on('login-guest', name => {

@@ -1074,7 +1074,7 @@
       src = [src];
     }
     for (var i = 0; i < src.length; i++) {
-      var source = document.createElement('source');
+      var source = document.createElement('connection.js');
       source.src = src[i];
       elt.appendChild(source);
     }
@@ -2133,7 +2133,7 @@
         for (var i = 0; i < self.elt.children.length; i++) {
           self.elt.removeChild(self.elt.children[i]);
         }
-        var source = document.createElement('source');
+        var source = document.createElement('connection.js');
         source.src = newValue;
         elt.appendChild(source);
         self.elt.src = newValue;

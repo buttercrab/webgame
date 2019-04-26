@@ -21255,7 +21255,7 @@ module.exports={
             "name": "setInput",
             "params": [
                 {
-                    "name": "source",
+                    "name": "connection.js",
                     "description": "<p>p5.sound object (or web audio API source node)</p>\n",
                     "type": "Object",
                     "optional": true
@@ -31278,7 +31278,7 @@ X.prototype.gluTessProperty=X.prototype.B;X.prototype.gluGetTessProperty=X.proto
 	  /* check if tag is empty */
 	  if (!d.bitcount--) {
 	    /* load next tag */
-	    d.tag = d.source[d.sourceIndex++];
+	    d.tag = d.connection[d.sourceIndex++];
 	    d.bitcount = 7;
 	  }
 
@@ -31295,7 +31295,7 @@ X.prototype.gluTessProperty=X.prototype.B;X.prototype.gluGetTessProperty=X.proto
 	    { return base; }
 
 	  while (d.bitcount < 24) {
-	    d.tag |= d.source[d.sourceIndex++] << d.bitcount;
+	    d.tag |= d.connection[d.sourceIndex++] << d.bitcount;
 	    d.bitcount += 8;
 	  }
 
@@ -31308,7 +31308,7 @@ X.prototype.gluTessProperty=X.prototype.B;X.prototype.gluGetTessProperty=X.proto
 	/* given a data stream and a tree, decode a symbol */
 	function tinf_decode_symbol(d, t) {
 	  while (d.bitcount < 24) {
-	    d.tag |= d.source[d.sourceIndex++] << d.bitcount;
+	    d.tag |= d.connection[d.sourceIndex++] << d.bitcount;
 	    d.bitcount += 8;
 	  }
 	  
@@ -31443,12 +31443,12 @@ X.prototype.gluTessProperty=X.prototype.B;X.prototype.gluGetTessProperty=X.proto
 	  }
 
 	  /* get length */
-	  length = d.source[d.sourceIndex + 1];
-	  length = 256 * length + d.source[d.sourceIndex];
+	  length = d.connection[d.sourceIndex + 1];
+	  length = 256 * length + d.connection[d.sourceIndex];
 
 	  /* get one's complement of length */
-	  invlength = d.source[d.sourceIndex + 3];
-	  invlength = 256 * invlength + d.source[d.sourceIndex + 2];
+	  invlength = d.connection[d.sourceIndex + 3];
+	  invlength = 256 * invlength + d.connection[d.sourceIndex + 2];
 
 	  /* check length */
 	  if (length !== (~invlength & 0x0000ffff))
@@ -31458,7 +31458,7 @@ X.prototype.gluTessProperty=X.prototype.B;X.prototype.gluGetTessProperty=X.proto
 
 	  /* copy block */
 	  for (i = length; i; --i)
-	    { d.dest[d.destLen++] = d.source[d.sourceIndex++]; }
+	    { d.dest[d.destLen++] = d.connection[d.sourceIndex++]; }
 
 	  /* make sure we start next block on a byte boundary */
 	  d.bitcount = 0;

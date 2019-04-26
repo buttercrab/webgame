@@ -9,6 +9,7 @@ module.exports = (io) => {
     self.io = io;
     self.userData = JSON.parse(fs.readFileSync(__dirname + '/../data/user.json').toString());
     self.connections = {};
+    self.logined = {};
     self.room = {};
 
     self.saveUserData = async () => {
@@ -17,6 +18,7 @@ module.exports = (io) => {
 
     self.login = (socketid, id, hashed) => {
         if (!self.userData[id]) return false;
+        if (self.logined[id]) return false;
         for (let i = 0, t = Math.floor(new Date().getTime() / 1000); i < 60; i++, t--) {
             if (crypto.createHash('sha256').update(self.userData[id].pw + t).digest('hex') === hashed) {
                 self.connections[socketid].logined = true;
@@ -27,6 +29,8 @@ module.exports = (io) => {
                 self.connections[socketid].socket.handshake.session.userid = id;
                 self.connections[socketid].socket.handshake.session.pw = self.userData[id].pw;
                 self.connections[socketid].socket.handshake.session.save();
+
+                self.logined[self.connections[socketid].id] = true;
 
                 return true;
             }
@@ -45,6 +49,7 @@ module.exports = (io) => {
         if(!self.logined(socketid)) return false;
         self.connections[socketid].logined = false;
         self.connections[socketid].isGuest = false;
+        self.logined[self.connections[socketid].id] = false;
         delete self.connections[socketid].id;
         delete self.connections[socketid].name;
         delete self.connections[socketid].socket.handshake.session.userid;
@@ -145,6 +150,7 @@ module.exports = (io) => {
     self.disconnect = (socketid) => {
         if (!self.connections[socketid]) return false;
         self.leaveRoom(socketid);
+        self.logout(socketid);
         self.connections[socketid].peer.destroy();
         delete self.connections[socketid];
         return true;

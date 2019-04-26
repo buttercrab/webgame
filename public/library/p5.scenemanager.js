@@ -8,31 +8,31 @@
 // Author: Marian Veteanu
 // http://github.com/mveteanu
 //
-function P5Scenemanager(p)
+function SceneManager(p)
 {
     this.scenes = [];
     this.scene = null;
-    
+
     // Wire relevant p5.js events, except setup()
     // If you don't call this method, you need to manually wire events
     this.wire = function()
     {
-        const P5Events = [ "mouseClicked", 
-                "mousePressed", 
-                "mouseReleased", 
-                "mouseMoved", 
-                "mouseDragged", 
-                "doubleClicked", 
-                "mouseWheel", 
-                "keyPressed", 
-                "keyReleased", 
-                "keyTyped", 
-                "touchStarted", 
-                "touchMoved", 
-                "touchEnded", 
-                "deviceMoved", 
-                "deviceTurned", 
-                "deviceShaken" ];
+        const P5Events = [ "mouseClicked",
+            "mousePressed",
+            "mouseReleased",
+            "mouseMoved",
+            "mouseDragged",
+            "doubleClicked",
+            "mouseWheel",
+            "keyPressed",
+            "keyReleased",
+            "keyTyped",
+            "touchStarted",
+            "touchMoved",
+            "touchEnded",
+            "deviceMoved",
+            "deviceTurned",
+            "deviceShaken" ];
 
         var me = this;
         var o = p != null ? p : window;
@@ -47,7 +47,7 @@ function P5Scenemanager(p)
             let sEvent = P5Events[i]; // let is necesary to set the scope at the level of for
             o[sEvent] = function() { me.handleEvent(sEvent) };
         }
-        
+
         return me;
     }
 
@@ -60,17 +60,17 @@ function P5Scenemanager(p)
 
         // inject p as a property of the scene
         this.p = p;
-        
+
         // inject sceneManager as a property of the scene
         oScene.sceneManager = this;
 
-        var o = {   fnScene: fnScene, 
-                    oScene: oScene,
-                    hasSetup : "setup" in oScene,
-                    hasEnter : "enter" in oScene,
-                    hasDraw : "draw" in oScene,
-                    setupExecuted : false,
-                    enterExecuted : false };
+        var o = {   fnScene: fnScene,
+            oScene: oScene,
+            hasSetup : "setup" in oScene,
+            hasEnter : "enter" in oScene,
+            hasDraw : "draw" in oScene,
+            setupExecuted : false,
+            enterExecuted : false };
 
         this.scenes.push(o);
         return o;
@@ -81,7 +81,7 @@ function P5Scenemanager(p)
     {
         for(var i = 0; i < this.scenes.length; i++)
         {
-            var o = this.scenes[i]; 
+            var o = this.scenes[i];
             if ( o.fnScene == fnScene )
                 return i;
         }
@@ -114,7 +114,7 @@ function P5Scenemanager(p)
 
         if ( o == null )
             o = this.addScene( fnScene );
-        
+
         // Re-arm the enter function at each show of the scene
         o.enterExecuted = false;
 
@@ -125,7 +125,7 @@ function P5Scenemanager(p)
     }
 
     // Show the next scene in the collection
-    // Useful if implementing demo applications 
+    // Useful if implementing demo applications
     // where you want to advance scenes automatically
     this.showNextScene = function( sceneArgs )
     {
@@ -136,7 +136,7 @@ function P5Scenemanager(p)
 
         if ( this.scene != null )
         {
-            // search current scene... 
+            // search current scene...
             // can be optimized to avoid searching current scene...
             var i = this.findSceneIndex( this.scene.fnScene );
             nextSceneIndex = i < this.scenes.length - 1 ? i + 1 : 0;
@@ -145,16 +145,16 @@ function P5Scenemanager(p)
         var nextScene = this.scenes[nextSceneIndex];
         this.showScene( nextScene.fnScene, sceneArgs );
     }
-    
+
     // This is the SceneManager .draw() method
-    // This will dispatch the main draw() to the 
+    // This will dispatch the main draw() to the
     // current scene draw() method
     this.draw = function()
     {
         // take the current scene in a variable to protect it in case
         // it gets changed by the user code in the events such as setup()...
         var currScene = this.scene;
-        
+
         if ( currScene == null )
             return;
 
@@ -177,7 +177,7 @@ function P5Scenemanager(p)
     }
 
 
-    // Handle a certain even for a scene... 
+    // Handle a certain even for a scene...
     // It is used by the anonymous functions from the wire() function
     this.handleEvent = function(sEvent)
     {
