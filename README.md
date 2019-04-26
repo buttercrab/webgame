@@ -11,7 +11,7 @@ The WebGame using `node.js`
 - Used [`socket.io`](https://socket.io) to communicate
 - Used [`p5.js`](https://p5js.org) to render game
 
-## Install
+## Installing
 
 First, download the zip file or clone this repository
 
@@ -33,6 +33,18 @@ npm run ready
 ```
 
 Then in `server.js`, change configurations to run in your computer
+
+When all done run 
+
+```
+npm run start
+```
+
+to start the server
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/buttercrab/webgame/blob/master/LICENSE) file for details
 
 ## References
 - Used 404 page from [here](https://colorlib.com/etc/404/colorlib-error-404-19/)
