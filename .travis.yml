@@ -5,6 +5,7 @@ node_js:
 install:
   - npm install npm@6.9.0
   - npm install
-  - npm run ready
+  - mkdir data
+  - mkdir sessions
 script:
   - npm run run

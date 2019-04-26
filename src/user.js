@@ -7,7 +7,13 @@ const uniqid = require('uniqid');
 module.exports = (io) => {
     const self = this;
     self.io = io;
-    self.userData = JSON.parse(fs.readFileSync(__dirname + '/../data/user.json').toString());
+    let data;
+    try {
+        data = fs.readFileSync(__dirname + '/../data/user.json').toString();
+    } catch(e) {
+        data = '{}';
+    }
+    self.userData = JSON.parse(data);
     self.connections = {};
     self.logined = {};
     self.room = {};
