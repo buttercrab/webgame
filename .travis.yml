@@ -1,5 +1,5 @@
-os: osx
-language: node_js
+before_install:
+  - brew install node@10.15.2
 install:
   - npm install
   - npm run ready
