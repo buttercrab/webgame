@@ -4,7 +4,7 @@ let mgr;
 let mainFont;
 
 function setup() {
-    setSize(window.innerWidth, window.innerHeight);
+    refresh();
     document.getElementById('defaultCanvas0').style.position = 'absolute';
 
     mainFont = loadFont('https://buttercrab.ml/public/font?fontName=Raleway&fontFamily=Regular');
@@ -14,9 +14,6 @@ function setup() {
 }
 
 function draw() {
-    if (width !== window.innerWidth || height !== window.innerHeight)
-        setSize(window.innerWidth, window.innerHeight);
-
     mgr.draw();
 }
 

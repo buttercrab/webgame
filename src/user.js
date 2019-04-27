@@ -188,14 +188,9 @@ module.exports = (io) => {
     self.getRooms = () => {
         let res = {};
         for (let i in self.room) {
-            let users = {};
-            for (let j in self.room[i].ids)
-                users[self.connections[j].id] = self.room[i].ids[j];
             res[i] = {
                 count: self.room[i].count,
-                users: users,
-                name: self.room[i].name,
-                roomid: i
+                name: self.room[i].name
             }
         }
         return res;

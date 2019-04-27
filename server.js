@@ -77,6 +77,12 @@ function server(certs) {
         fs.createReadStream(__dirname + '/public/src/index.html').pipe(res);
     });
 
+    app.get('/admin', (req, res) => {
+        res.statusCode = 200;
+        res.setHeader('content-type', 'text/html');
+        fs.createReadStream(__dirname + '/public/src/admin.html').pipe(res);
+    });
+
     app.get('/public/font', (req, res) => {
         res.statusCode = 404;
         if (!req.query.fontName || !req.query.fontFamily)

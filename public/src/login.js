@@ -101,7 +101,7 @@ socket.on('rooms', rooms => {
 socket.on('login', msg => {
     if (msg) {
         logined = true;
-        setSize(window.innerWidth, window.innerHeight);
+        refresh();
     } else {
         login_failed(3);
         socket.emit('logined');
@@ -111,7 +111,7 @@ socket.on('login', msg => {
 socket.on('logout', msg => {
     if (msg) {
         logined = false;
-        setSize(window.innerWidth, window.innerHeight);
+        refresh();
     } else {
         socket.emit('logined');
     }
@@ -119,13 +119,13 @@ socket.on('logout', msg => {
 
 socket.on('logined', msg => {
     logined = msg;
-    setSize(window.innerWidth, window.innerHeight);
+    refresh();
 });
 
 socket.on('register', msg => {
     if (msg) {
         logined = true;
-        setSize(window.innerWidth, window.innerHeight);
+        refresh();
     } else {
         register_failed(4);
         socket.emit('logined');
@@ -135,7 +135,7 @@ socket.on('register', msg => {
 socket.on('delete-user', msg => {
     if (msg) {
         logined = false;
-        setSize(window.innerWidth, window.innerHeight);
+        refresh();
     } else {
         delete_user_failed();
         // TODO
@@ -166,7 +166,7 @@ function login_failed(code) {
         default:
             loginFailMsg = '';
     }
-    setSize(window.innerWidth, window.innerHeight);
+    refresh();
 }
 
 function login_submit() {
@@ -200,7 +200,7 @@ function register_failed(code) {
         default:
             registerFailMsg = '';
     }
-    setSize(window.innerWidth, window.innerHeight);
+    refresh();
 }
 
 function register_submit() {
@@ -337,8 +337,39 @@ function view_login() {
     });
 }
 
-function setSize(w, h) {
-    createCanvas(w, h);
+function getRoomHTML() {
+    let res = `<ul class="room-list">`;
+
+    for (let roomid in roomData) {
+        res +=
+            `
+<li class="room-list item">
+    <div class="room-list item content">
+        <div>${roomData[roomid].name}</div>
+        <div class="room-list item content subtitle">${roomid}</div>
+    </div>
+    <div class="room-list item content-left">
+        <div class="room-list item count">${roomData[roomid].count}</div>
+        <button class="room-list item join">Join</button>
+    </div>
+</li>
+`;
+    }
+
+    res += `</ul>`;
+
+    console.log(res);
+    return res;
+}
+
+function makeRoomList() {
+    removeElements();
+
+    createDiv(self.getRoomHTML());
+}
+
+function refresh() {
+    createCanvas(window.innerWidth, window.innerHeight);
 
     if(logined === undefined) {
         start_loading();
@@ -346,7 +377,7 @@ function setSize(w, h) {
     }
     finish_loading();
     if(logined) {
-        removeElements();
+        makeRoomList();
         return;
     }
 

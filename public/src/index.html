@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bang</title>
     <link rel="shortcut icon" type="image/x-icon" href="https://buttercrab.ml/public/favicon/favicon.ico"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/p5.min.js" type="application/javascript"></script>
+    <script src="https://buttercrab.ml/public/lib/p5.scenemanager.js" type="application/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.dom.min.js"
+            type="application/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simple-peer/9.3.0/simplepeer.min.js"
+            type="application/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.slim.js"
+            type="application/javascript"></script>
     <style>
         @import url("https://fonts.googleapis.com/css?family=Fira+Sans");
 
@@ -299,16 +307,19 @@
             box-sizing: border-box;
             position: relative;
         }
+
         svg {
             display: block;
             margin: 0;
             padding: 0;
         }
+
         .spinner {
             width: 66px;
             height: 66px;
             animation: contanim 2s linear infinite;
         }
+
         svg {
             width: 100%;
             height: 100%;
@@ -317,6 +328,7 @@
             position: absolute;
             transform: rotate(-90deg);
         }
+
         svg:nth-child(1) circle {
             stroke: #84ebbd;
             stroke-dasharray: 1, 300;
@@ -324,6 +336,7 @@
             animation: strokeanim 3s calc(.2s * (1)) ease infinite;
             transform-origin: center center;
         }
+
         svg:nth-child(2) circle {
             stroke: #4977ec;
             stroke-dasharray: 1, 300;
@@ -331,6 +344,7 @@
             animation: strokeanim 3s calc(.2s * (2)) ease infinite;
             transform-origin: center center;
         }
+
         svg:nth-child(3) circle {
             stroke: #f6bb67;
             stroke-dasharray: 1, 300;
@@ -338,6 +352,7 @@
             animation: strokeanim 3s calc(.2s * (3)) ease infinite;
             transform-origin: center center;
         }
+
         svg:nth-child(4) circle {
             stroke: #333841;
             stroke-dasharray: 1, 300;
@@ -345,6 +360,7 @@
             animation: strokeanim 3s calc(.2s * (4)) ease infinite;
             transform-origin: center center;
         }
+
         @keyframes strokeanim {
             0% {
                 stroke-dasharray: 1, 300;
@@ -359,6 +375,7 @@
                 stroke-dashoffset: -175.64497;
             }
         }
+
         @keyframes contanim {
             100% {
                 transform: rotate(360deg);
@@ -383,18 +400,22 @@
             border: #de5c57 1px solid;
         }
 
+        .room-list {
+            position: absolute;
+            width: 400px;
+            height: 100%;
+            background: white;
+        }
+
+        .room-list .item {
+            position: relative;
+            margin-top: 30px;
+            border-radius: 10px;
+            border: black 1px solid;
+        }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/p5.min.js" type="application/javascript"></script>
-    <script src="https://buttercrab.ml/public/lib/p5.scenemanager.js" type="application/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.dom.min.js"
-            type="application/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/simple-peer/9.3.0/simplepeer.min.js"
-            type="application/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.slim.js"
-            type="application/javascript"></script>
     <script src="https://buttercrab.ml/public/src/connection.js" type="application/javascript"></script>
     <script src="https://buttercrab.ml/public/src/login.js" type="application/javascript"></script>
-    <script src="https://buttercrab.ml/public/src/intro.js" type="application/javascript"></script>
     <script src="https://buttercrab.ml/public/src/sketch.js" type="application/javascript"></script>
 </head>
 <body>
