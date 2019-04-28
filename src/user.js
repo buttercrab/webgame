@@ -10,7 +10,7 @@ module.exports = (io) => {
     let data;
     try {
         data = fs.readFileSync(__dirname + '/../data/user.json').toString();
-    } catch(e) {
+    } catch (e) {
         data = '{}';
     }
     self.userData = JSON.parse(data);
@@ -52,7 +52,7 @@ module.exports = (io) => {
     };
 
     self.logout = (socketid) => {
-        if(!self.logined(socketid)) return false;
+        if (!self.logined(socketid)) return false;
         self.connections[socketid].loginedUsers = false;
         self.connections[socketid].isGuest = false;
         self.loginedUsers[self.connections[socketid].id] = false;
@@ -226,6 +226,10 @@ module.exports = (io) => {
     self.myRoom = (socketid) => {
         if (!self.logined(socketid)) return;
         return self.connections[socketid].roomid;
+    };
+
+    self.myID = (socketid) => {
+        return self.connections[socketid].id;
     };
 
     self.notify = (title, msg) => {

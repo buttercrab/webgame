@@ -1,5 +1,5 @@
 let logined = undefined, roomData = {}, loginViewState = 0;
-let registerFailMsg = '', loginFailMsg = '', myRoomID = '';
+let registerFailMsg = '', loginFailMsg = '', myRoomID = '', username = '', isGuest = false;
 
 socket.on('heartbeat', () => {
     setTimeout(() => {
@@ -117,7 +117,9 @@ socket.on('logout', msg => {
 });
 
 socket.on('logined', msg => {
-    logined = msg;
+    logined = msg.logined;
+    username = msg.id;
+    isGuest = msg.isGuest === true;
     getRooms();
 });
 
@@ -189,14 +191,17 @@ function register_failed(code) {
             registerFailMsg = '<div class="fail-msg">Username Required</div>';
             break;
         case 2:
-            registerFailMsg = '<div class="fail-msg">Username Required</div>';
+            registerFailMsg = '<div class="fail-msg">Nickname Required</div>';
             break;
         case 3:
             registerFailMsg = '<div class="fail-msg">Password Required</div>';
-            return;
+            break;
         case 4:
             registerFailMsg = '<div class="fail-msg">Username is Used</div>';
-            return;
+            break;
+        case 5:
+            registerFailMsg = '<div class="fail-msg">Username is Requiered for Guest login</div>';
+            break;
         default:
             registerFailMsg = '';
     }
@@ -222,28 +227,36 @@ function register_submit() {
     register(id, nm, pw);
 }
 
+function guest_submit() {
+    const id = document.getElementById('register-username').value;
+    if (!id) {
+        register_failed(5);
+        return;
+    }
+    login_guest(id);
+}
+
 let is_loading = false, loginViewOn = false;
 
 function start_loading() {
     if (loginViewOn) removeElements();
     if (is_loading) return;
     is_loading = true;
-    createDiv(
-        '<div class="spinner">\n' +
-        '    <svg viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">\n' +
-        '        <circle class="length" fill="none" stroke-width="8" stroke-linecap="round" cx="33" cy="33" r="28"></circle>\n' +
-        '    </svg>\n' +
-        '    <svg viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">\n' +
-        '        <circle fill="none" stroke-width="8" stroke-linecap="round" cx="33" cy="33" r="28"></circle>\n' +
-        '    </svg>\n' +
-        '    <svg viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">\n' +
-        '        <circle fill="none" stroke-width="8" stroke-linecap="round" cx="33" cy="33" r="28"></circle>\n' +
-        '    </svg>\n' +
-        '    <svg viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">\n' +
-        '        <circle fill="none" stroke-width="8" stroke-linecap="round" cx="33" cy="33" r="28"></circle>\n' +
-        '    </svg>\n' +
-        '</div>'
-    );
+    createDiv(`
+<div class="spinner">
+    <svg viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+        <circle class="length" fill="none" stroke-width="8" stroke-linecap="round" cx="33" cy="33" r="28"></circle>
+    </svg>
+    <svg viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+        <circle fill="none" stroke-width="8" stroke-linecap="round" cx="33" cy="33" r="28"></circle>
+    </svg>
+    <svg viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+        <circle fill="none" stroke-width="8" stroke-linecap="round" cx="33" cy="33" r="28"></circle>
+    </svg>
+    <svg viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+        <circle fill="none" stroke-width="8" stroke-linecap="round" cx="33" cy="33" r="28"></circle>
+    </svg>
+</div>`);
 }
 
 function finish_loading() {
@@ -259,35 +272,34 @@ function view_login() {
     loginViewState = 0;
     loginViewOn = true;
 
-    createDiv(
-        '<div class="title">\n' +
-        '    <img src="https://buttercrab.ml/public/img/logo.png" alt="Bang">\n' +
-        '</div>\n' +
-        '<div class="form-structor" id="base">\n' +
-        '    <div class="signup">\n' +
-        '        <h2 class="form-title" id="signup"><span>or</span>Sign up\u00A0\u00A0\u00A0</h2>\n' +
-        '        <div class="form-holder">\n' +
-        '            <input type="username" class="input" placeholder="Username" id="register-username"/>\n' +
-        '            <input type="nickname" class="input" placeholder="Nickname" id="register-nickname"/>\n' +
-        '            <input type="password" class="input" placeholder="Password" id="register-password"/>\n' +
-        '        </div>\n' +
-        '        <button class="submit-btn" id="signup-btn" onclick="register_submit()">Sign up</button>\n' +
-        '        <div class="form-guest">or login as <a class="form-click" onclick="login_guest()">Guest</a></div>\n' +
-        registerFailMsg +
-        '    </div>\n' +
-        '    <div class="login slide-up">\n' +
-        '        <div class="center">\n' +
-        '            <h2 class="form-title" id="login"><span>or</span>Log in\u00A0\u00A0\u00A0</h2>\n' +
-        '            <div class="form-holder">\n' +
-        '                <input type="username" class="input" placeholder="Username" id="login-username"/>\n' +
-        '                <input type="password" class="input" placeholder="Password" id="login-password"/>\n' +
-        '            </div>\n' +
-        '            <button class="submit-btn" id="login-btn" onclick="login_submit()">Log in</button>\n' +
-        loginFailMsg +
-        '        </div>\n' +
-        '    </div>\n' +
-        '</div>'
-    );
+    createDiv(`
+<div class="title">
+    <img src="https://buttercrab.ml/public/img/logo.png" alt="Bang">
+</div>
+<div class="form-structor" id="base">
+    <div class="signup">
+        <h2 class="form-title" id="signup"><span>or</span>Sign up\u00A0\u00A0\u00A0</h2>
+        <div class="form-holder">
+            <input type="username" class="input" placeholder="Username" id="register-username"/>
+            <input type="nickname" class="input" placeholder="Nickname" id="register-nickname"/>
+            <input type="password" class="input" placeholder="Password" id="register-password"/>
+        </div>
+        <button class="submit-btn" id="signup-btn" onclick="register_submit()">Sign up</button>
+        <div class="form-guest">or login as <a class="form-click" onclick="guest_submit()">Guest</a></div>
+        ${registerFailMsg}
+    </div>
+    <div class="login slide-up">
+        <div class="center">
+            <h2 class="form-title" id="login"><span>or</span>Log in\u00A0\u00A0\u00A0</h2>
+            <div class="form-holder">
+                <input type="username" class="input" placeholder="Username" id="login-username"/>
+                <input type="password" class="input" placeholder="Password" id="login-password"/>
+            </div>
+            <button class="submit-btn" id="login-btn" onclick="login_submit()">Log in</button>
+            ${loginFailMsg}
+        </div>
+    </div>
+</div>`);
 
     const login = document.getElementById('login');
     const signin = document.getElementById('signup');
@@ -338,18 +350,15 @@ function view_login() {
 }
 
 function getRoomHTML() {
-    let res =
-        `
+    let res = `
 <div class="room-list-title">
     <img src="https://buttercrab.ml/public/img/logo-white.png" alt="Bang"/>
 </div>
 <div class="room-list">
-<div class="room-list-scroll">
-        `
+<div class="room-list-scroll">`;
 
     for (let roomid in roomData) {
-        res +=
-            `
+        res += `
 <div class="room-list item" onclick="joinRoom('${roomid}')">
     <div class="room-list-content">
         <div>${roomData[roomid].name}</div>
@@ -359,18 +368,15 @@ function getRoomHTML() {
         <div class="room-list-count">${roomData[roomid].count}</div>
         <div class="room-list-join">Click to Join</div>
     </div>
-</div>
-`;
+</div>`;
     }
 
-    res +=
-        `
+    res += `
 </div>
 </div>
 <div class="room-list-subtitle">rooms</div>
 <div class="room-list-footer">
-</div>
-        `
+</div>`; // TODO: add logout, make room, refresh buttons
 
     return res;
 }
@@ -390,7 +396,8 @@ function refresh() {
     }
     finish_loading();
     if (logined) {
-        makeRoomList();
+        if (myRoomID === '')
+            makeRoomList();
         return;
     }
 

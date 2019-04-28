@@ -144,7 +144,10 @@ function server(certs) {
     io.on('connection', socket => {
         user.connect(socket);
 
-        socket.emit('logined', user.logined(socket.id));
+        socket.emit('logined', {
+            logined: user.logined(socket.id),
+            id: user.myID(socket.id)
+        });
 
         socket.emit('heartbeat');
         socket.on('heartbeat', () => {
@@ -163,11 +166,18 @@ function server(certs) {
 
         socket.on('login-guest', name => {
             user.loginGuest(socket.id, name);
-            socket.emit('logined', user.logined(socket.id));
+            socket.emit('logined', {
+                logined: user.logined(socket.id),
+                id: user.myID(socket.id),
+                isGuest: true
+            });
         });
 
         socket.on('logined', () => {
-            socket.emit('logined', user.logined(socket.id));
+            socket.emit('logined', {
+                logined: user.logined(socket.id),
+                id: user.myID(socket.id)
+            });
         });
 
         socket.on('register', msg => {
