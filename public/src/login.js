@@ -1,6 +1,5 @@
-
 let logined = undefined, roomData = {}, loginViewState = 0;
-let registerFailMsg = "", loginFailMsg = "";
+let registerFailMsg = '', loginFailMsg = '', myRoomID = '';
 
 socket.on('heartbeat', () => {
     setTimeout(() => {
@@ -101,7 +100,7 @@ socket.on('rooms', rooms => {
 socket.on('login', msg => {
     if (msg) {
         logined = true;
-        refresh();
+        getRooms();
     } else {
         login_failed(3);
         socket.emit('logined');
@@ -111,7 +110,7 @@ socket.on('login', msg => {
 socket.on('logout', msg => {
     if (msg) {
         logined = false;
-        refresh();
+        getRooms();
     } else {
         socket.emit('logined');
     }
@@ -119,13 +118,13 @@ socket.on('logout', msg => {
 
 socket.on('logined', msg => {
     logined = msg;
-    refresh();
+    getRooms();
 });
 
 socket.on('register', msg => {
     if (msg) {
         logined = true;
-        refresh();
+        getRooms();
     } else {
         register_failed(4);
         socket.emit('logined');
@@ -135,7 +134,7 @@ socket.on('register', msg => {
 socket.on('delete-user', msg => {
     if (msg) {
         logined = false;
-        refresh();
+        getRooms();
     } else {
         delete_user_failed();
         // TODO
@@ -144,6 +143,7 @@ socket.on('delete-user', msg => {
 
 socket.on('getRooms', data => {
     roomData = data;
+    refresh();
 });
 
 socket.on('refresh', () => {
@@ -225,8 +225,8 @@ function register_submit() {
 let is_loading = false, loginViewOn = false;
 
 function start_loading() {
-    if(loginViewOn) removeElements();
-    if(is_loading) return;
+    if (loginViewOn) removeElements();
+    if (is_loading) return;
     is_loading = true;
     createDiv(
         '<div class="spinner">\n' +
@@ -247,7 +247,7 @@ function start_loading() {
 }
 
 function finish_loading() {
-    if(is_loading) {
+    if (is_loading) {
         removeElements();
         is_loading = false;
     }
@@ -293,7 +293,7 @@ function view_login() {
     const signin = document.getElementById('signup');
 
     login.addEventListener('click', e => {
-        if(loginViewState === 1) return;
+        if (loginViewState === 1) return;
         let parent = e.target.parentNode.parentNode;
         Array.from(e.target.parentNode.parentNode.classList).find(element => {
             if (element !== "slide-up") {
@@ -307,7 +307,7 @@ function view_login() {
     });
 
     signin.addEventListener('click', e => {
-        if(loginViewState === 0) return;
+        if (loginViewState === 0) return;
         let parent = e.target.parentNode;
         Array.from(e.target.parentNode.classList).find(element => {
             if (element !== "slide-up") {
@@ -321,62 +321,75 @@ function view_login() {
     });
 
     document.getElementById('register-username').addEventListener('keyup', event => {
-        if(event.key === 'Enter')register_submit();
+        if (event.key === 'Enter') register_submit();
     });
     document.getElementById('register-nickname').addEventListener('keyup', event => {
-        if(event.key === 'Enter')register_submit();
+        if (event.key === 'Enter') register_submit();
     });
     document.getElementById('register-password').addEventListener('keyup', event => {
-        if(event.key === 'Enter')register_submit();
+        if (event.key === 'Enter') register_submit();
     });
     document.getElementById('login-username').addEventListener('keyup', event => {
-        if(event.key === 'Enter')login_submit();
+        if (event.key === 'Enter') login_submit();
     });
     document.getElementById('login-password').addEventListener('keyup', event => {
-        if(event.key === 'Enter')login_submit();
+        if (event.key === 'Enter') login_submit();
     });
 }
 
 function getRoomHTML() {
-    let res = `<ul class="room-list">`;
+    let res =
+        `
+<div class="room-list-title">
+    <img src="https://buttercrab.ml/public/img/logo-white.png" alt="Bang"/>
+</div>
+<div class="room-list">
+<div class="room-list-scroll">
+        `
 
     for (let roomid in roomData) {
         res +=
             `
-<li class="room-list item">
-    <div class="room-list item content">
+<div class="room-list item" onclick="joinRoom('${roomid}')">
+    <div class="room-list-content">
         <div>${roomData[roomid].name}</div>
-        <div class="room-list item content subtitle">${roomid}</div>
+        <div class="room-list-content-subtitle">${roomid}</div>
     </div>
-    <div class="room-list item content-left">
-        <div class="room-list item count">${roomData[roomid].count}</div>
-        <button class="room-list item join">Join</button>
+    <div class="room-list-content right">
+        <div class="room-list-count">${roomData[roomid].count}</div>
+        <div class="room-list-join">Click to Join</div>
     </div>
-</li>
+</div>
 `;
     }
 
-    res += `</ul>`;
+    res +=
+        `
+</div>
+</div>
+<div class="room-list-subtitle">rooms</div>
+<div class="room-list-footer">
+</div>
+        `
 
-    console.log(res);
     return res;
 }
 
 function makeRoomList() {
     removeElements();
 
-    createDiv(self.getRoomHTML());
+    createDiv(self.getRoomHTML()).addClass('room-list-wrap');
 }
 
 function refresh() {
     createCanvas(window.innerWidth, window.innerHeight);
 
-    if(logined === undefined) {
+    if (logined === undefined) {
         start_loading();
         return;
     }
     finish_loading();
-    if(logined) {
+    if (logined) {
         makeRoomList();
         return;
     }

@@ -197,13 +197,14 @@ module.exports = (io) => {
     };
 
     self.joinRoom = (socketid, roomid) => {
-        if (!self.logined(socketid)) return;
-        if (!self.room[roomid]) return;
-        if (self.connections[socketid].roomid) return;
+        if (!self.logined(socketid)) return false;
+        if (!self.room[roomid]) return false;
+        if (self.connections[socketid].roomid) return false;
         self.connections[socketid].socket.join(roomid);
         self.connections[socketid].roomid = roomid;
         self.room[roomid].ids[socketid] = false;
         self.room[roomid].count++;
+        return true;
     };
 
     self.leaveRoom = (socketid) => {
@@ -220,6 +221,11 @@ module.exports = (io) => {
         delete self.connections[socketid].roomid;
         self.connections[socketid].socket.leave(roomid, err => {
         });
+    };
+
+    self.myRoom = (socketid) => {
+        if (!self.logined(socketid)) return;
+        return self.connections[socketid].roomid;
     };
 
     self.notify = (title, msg) => {

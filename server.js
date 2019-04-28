@@ -112,6 +112,7 @@ function server(certs) {
 
         stream.on('error', err => {
             res.statusCode = 404;
+            res.end();
         });
     });
 
@@ -191,6 +192,10 @@ function server(certs) {
 
         socket.on('leaveRoom', () => {
             user.leaveRoom(socket.id);
+        });
+
+        socket.on('myRoom', () => {
+            socket.emit('myRoom', user.myRoom(socket.id));
         });
 
         socket.on('disconnect', () => {
