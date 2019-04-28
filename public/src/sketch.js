@@ -10,7 +10,7 @@ function setup() {
     mainFont = loadFont('https://buttercrab.ml/public/font?fontName=Raleway&fontFamily=Regular');
 
     mgr = new SceneManager();
-    mgr.showScene(Game);
+    mgr.showScene(Waiting);
 }
 
 function draw() {

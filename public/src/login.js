@@ -259,13 +259,6 @@ function start_loading() {
 </div>`);
 }
 
-function finish_loading() {
-    if (is_loading) {
-        removeElements();
-        is_loading = false;
-    }
-}
-
 function view_login() {
     removeElements();
 
@@ -394,7 +387,10 @@ function refresh() {
         start_loading();
         return;
     }
-    finish_loading();
+    if (is_loading) {
+        removeElements();
+        is_loading = false;
+    }
     if (logined) {
         if (myRoomID === '')
             makeRoomList();

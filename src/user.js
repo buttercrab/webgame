@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const Peer = require('simple-peer');
 const wrtc = require('wrtc');
 const uniqid = require('uniqid');
+const game = require('./game.js');
 
 module.exports = (io) => {
     const self = this;
@@ -140,8 +141,8 @@ module.exports = (io) => {
                 self.connections[socket.id].peer.send(JSON.stringify({
                     type: 'heartbeat'
                 }));
-            } else {
-                self.connections[socket.id].peer.send(msg);
+            } else if(self.connections[socket.id].roomid) {
+                self.room[self.connections[socket.id].roomid].game.data(self.connections[socket.id].id, data);
             }
         });
 
@@ -180,7 +181,8 @@ module.exports = (io) => {
         self.room[roomid] = {
             ids: {},
             count: 1,
-            name: name
+            name: name,
+            game: game(roomid)
         };
         self.room[roomid].ids[socketid] = true; // true for room head false for else
     };
@@ -217,7 +219,10 @@ module.exports = (io) => {
             self.room[roomid].ids[Object.keys(self.room[roomid].ids)[0]] = true;
         } else self.room[roomid].ids[socketid] = undefined;
         self.room[roomid].count--;
-        if (self.room[roomid].count === 0) delete self.room[roomid];
+        if (self.room[roomid].count === 0) {
+            self.room[roomid].game.end();
+            delete self.room[roomid];
+        }
         delete self.connections[socketid].roomid;
         self.connections[socketid].socket.leave(roomid, err => {
         });

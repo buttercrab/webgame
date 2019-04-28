@@ -194,10 +194,12 @@ function server(certs) {
 
         socket.on('makeRoom', name => {
             user.makeRoom(socket.id, name);
+            socket.emit('getRooms', user.getRooms());
         });
 
         socket.on('joinRoom', roomid => {
             user.joinRoom(socket.id, roomid);
+            socket.emit('getRooms', user.getRooms());
         });
 
         socket.on('leaveRoom', () => {
