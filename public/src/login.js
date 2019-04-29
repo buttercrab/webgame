@@ -1,5 +1,7 @@
-let logined = undefined, roomData = {}, loginViewState = 0;
-let registerFailMsg = '', loginFailMsg = '', myRoomData = '', username = '', isGuest = false;
+let user = {};
+let roomList = {};
+let roomData = {};
+
 
 socket.on('heartbeat', () => {
     setTimeout(() => {
@@ -25,8 +27,8 @@ function digestMessage(message) {
 }
 
 function login(id, pw) {
-    start_loading();
-    logined = undefined;
+    startLoading();
+    user.logined = undefined;
     digestMessage(pw).then(value => {
         digestMessage(hexString(value) + Math.floor(new Date().getTime() / 1000)).then(hashed => {
             socket.emit('login', {
@@ -37,21 +39,21 @@ function login(id, pw) {
     });
 }
 
-function login_guest(name) {
-    start_loading();
-    logined = undefined;
+function loginGuest(name) {
+    startLoading();
+    user.logined = undefined;
     socket.emit('login-guest', name);
 }
 
 function logout() {
-    start_loading();
+    startLoading();
     socket.emit('logout');
-    logined = undefined;
+    user.logined = undefined;
 }
 
 function register(id, nm, pw) {
-    start_loading();
-    logined = undefined;
+    startLoading();
+    user.logined = undefined;
     digestMessage(pw).then(value => {
         socket.emit('register', {
             id: id,
@@ -62,8 +64,8 @@ function register(id, nm, pw) {
 }
 
 function deleteUser(id, pw) {
-    start_loading();
-    logined = undefined;
+    startLoading();
+    user.logined = undefined;
     digestMessage(pw).then(value => {
         socket.emit('delete-user', {
             id: id,
@@ -73,84 +75,81 @@ function deleteUser(id, pw) {
 }
 
 function makeRoom(name) {
-    socket.emit('makeRoom', name);
+    socket.emit('make-room', name);
 }
 
 function joinRoom(roomid) {
-    socket.emit('joinRoom', roomid);
+    socket.emit('join-room', roomid);
 }
 
 function leaveRoom() {
-    socket.emit('leaveRoom');
+    socket.emit('leave-room');
 }
 
 function getRooms() {
-    socket.emit('getRooms');
+    socket.emit('get-rooms');
 }
 
-socket.on('myRoom', msg => {
-    myRoomData = msg;
+socket.on('room-data', msg => {
+    roomData = msg;
     refresh();
 });
 
 socket.on('login', msg => {
     if (msg) {
-        logined = true;
+        user.logined = true;
         getRooms();
     } else {
-        login_failed(3);
+        loginFailed(3);
         socket.emit('logined');
     }
 });
 
 socket.on('logout', msg => {
     if (msg) {
-        logined = false;
+        user.logined = false;
         getRooms();
     } else {
         socket.emit('logined');
     }
 });
 
-socket.on('logined', msg => {
-    logined = msg.logined;
-    username = msg.id;
-    isGuest = msg.isGuest === true;
+socket.on('user-data', msg => {
+    user = msg;
+    user.isGuest = (msg.isGuest === true);
     getRooms();
 });
 
 socket.on('register', msg => {
     if (msg) {
-        logined = true;
+        user.logined = true;
         getRooms();
     } else {
-        register_failed(4);
+        registerFailed(4);
         socket.emit('logined');
     }
 });
 
 socket.on('delete-user', msg => {
     if (msg) {
-        logined = false;
+        user.logined = false;
         getRooms();
     } else {
-        delete_user_failed();
+        deleteUserFailed();
         // TODO
     }
 });
 
-socket.on('getRooms', data => {
-    roomData = data;
+socket.on('get-rooms', data => {
+    roomList = data;
     refresh();
-});
-
-socket.on('refresh', () => {
-    window.location.reload();
 });
 
 ///==========
 
-function login_failed(code) {
+let registerFailMsg = '', loginFailMsg = '';
+
+function loginFailed(code) {
     switch (code) {
         case 1:
             loginFailMsg = '<div class="fail-msg">Username Required</div>';
@@ -167,21 +166,21 @@ function login_failed(code) {
     refresh();
 }
 
-function login_submit() {
+function loginSubmit() {
     const id = document.getElementById('login-username').value;
     const pw = document.getElementById('login-password').value;
     if (!id) {
-        login_failed(1);
+        loginFailed(1);
         return;
     }
     if (!pw) {
-        login_failed(2);
+        loginFailed(2);
         return;
     }
     login(id, pw);
 }
 
-function register_failed(code) {
+function registerFailed(code) {
     switch (code) {
         case 1:
             registerFailMsg = '<div class="fail-msg">Username Required</div>';
@@ -204,40 +203,40 @@ function register_failed(code) {
     refresh();
 }
 
-function register_submit() {
+function registerSubmit() {
     const id = document.getElementById('register-username').value;
     const nm = document.getElementById('register-nickname').value;
     const pw = document.getElementById('register-password').value;
     if (!id) {
-        register_failed(1);
+        registerFailed(1);
         return;
     }
     if (!pw) {
-        register_failed(2);
+        registerFailed(2);
         return;
     }
     if (!nm) {
-        register_failed(3);
+        registerFailed(3);
         return;
     }
     register(id, nm, pw);
 }
 
-function guest_submit() {
+function guestSubmit() {
     const id = document.getElementById('register-username').value;
     if (!id) {
-        register_failed(5);
+        registerFailed(5);
         return;
     }
-    login_guest(id);
+    loginGuest(id);
 }
 
-let is_loading = false, loginViewOn = false;
+let onLoading = false, loginViewOn = false, loginViewState = 0;
 
-function start_loading() {
+function startLoading() {
     if (loginViewOn) removeElements();
-    if (is_loading) return;
-    is_loading = true;
+    if (onLoading) return;
+    onLoading = true;
     createDiv(`
 <div class="spinner">
     <svg viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
@@ -255,7 +254,7 @@ function start_loading() {
 </div>`);
 }
 
-function view_login() {
+function viewLogin() {
     removeElements();
 
     loginViewState = 0;
@@ -273,8 +272,8 @@ function view_login() {
             <input type="nickname" class="input" placeholder="Nickname" id="register-nickname"/>
             <input type="password" class="input" placeholder="Password" id="register-password"/>
         </div>
-        <button class="submit-btn" id="signup-btn" onclick="register_submit()">Sign up</button>
-        <div class="form-guest">or login as <a class="form-click" onclick="guest_submit()">Guest</a></div>
+        <button class="submit-btn" id="signup-btn" onclick="registerSubmit()">Sign up</button>
+        <div class="form-guest">or login as <a class="form-click" onclick="guestSubmit()">Guest</a></div>
         ${registerFailMsg}
     </div>
     <div class="login slide-up">
@@ -284,7 +283,7 @@ function view_login() {
                 <input type="username" class="input" placeholder="Username" id="login-username"/>
                 <input type="password" class="input" placeholder="Password" id="login-password"/>
             </div>
-            <button class="submit-btn" id="login-btn" onclick="login_submit()">Log in</button>
+            <button class="submit-btn" id="login-btn" onclick="loginSubmit()">Log in</button>
             ${loginFailMsg}
         </div>
     </div>
@@ -322,19 +321,19 @@ function view_login() {
     });
 
     document.getElementById('register-username').addEventListener('keyup', event => {
-        if (event.key === 'Enter') register_submit();
+        if (event.key === 'Enter') registerSubmit();
     });
     document.getElementById('register-nickname').addEventListener('keyup', event => {
-        if (event.key === 'Enter') register_submit();
+        if (event.key === 'Enter') registerSubmit();
     });
     document.getElementById('register-password').addEventListener('keyup', event => {
-        if (event.key === 'Enter') register_submit();
+        if (event.key === 'Enter') registerSubmit();
     });
     document.getElementById('login-username').addEventListener('keyup', event => {
-        if (event.key === 'Enter') login_submit();
+        if (event.key === 'Enter') loginSubmit();
     });
     document.getElementById('login-password').addEventListener('keyup', event => {
-        if (event.key === 'Enter') login_submit();
+        if (event.key === 'Enter') loginSubmit();
     });
 }
 
@@ -439,12 +438,12 @@ function refresh() {
     createCanvas(window.innerWidth, window.innerHeight);
 
     if (logined === undefined) {
-        start_loading();
+        startLoading();
         return;
     }
-    if (is_loading) {
+    if (onLoading) {
         removeElements();
-        is_loading = false;
+        onLoading = false;
     }
     if (logined) {
         if (myRoomID === '')
@@ -452,5 +451,5 @@ function refresh() {
         return;
     }
 
-    view_login();
+    viewLogin();
 }

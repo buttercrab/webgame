@@ -150,9 +150,10 @@ function server(certs) {
     io.on('connection', socket => {
         user.connect(socket);
 
-        socket.emit('logined', {
+        socket.emit('user-data', {
             logined: user.logined(socket.id),
-            id: user.myID(socket.id)
+            name: user.getUsername(socket.id),
+            id: socket.id
         });
 
         socket.emit('heartbeat');
@@ -172,17 +173,19 @@ function server(certs) {
 
         socket.on('login-guest', name => {
             user.loginGuest(socket.id, name);
-            socket.emit('logined', {
+            socket.emit('user-data', {
                 logined: user.logined(socket.id),
-                id: user.myID(socket.id),
+                name: user.getUsername(socket.id),
+                id: socket.id,
                 isGuest: true
             });
         });
 
         socket.on('logined', () => {
-            socket.emit('logined', {
+            socket.emit('user-data', {
                 logined: user.logined(socket.id),
-                id: user.myID(socket.id)
+                name: user.getUsername(socket.id),
+                id: socket.id
             });
         });
 
@@ -194,26 +197,26 @@ function server(certs) {
             socket.emit('delete-user', user.deleteUser(socket.id, msg.id, msg.pw));
         });
 
-        socket.on('getRooms', () => {
-            socket.emit('getRooms', user.getRooms());
+        socket.on('get-rooms', () => {
+            socket.emit('get-rooms', user.getRooms());
         });
 
-        socket.on('makeRoom', name => {
+        socket.on('make-room', name => {
             user.makeRoom(socket.id, name);
-            socket.emit('myRoom', user.myRoom(socket.id));
+            socket.emit('room-data', user.getRoomData(socket.id));
         });
 
-        socket.on('joinRoom', roomid => {
+        socket.on('join-room', roomid => {
             user.joinRoom(socket.id, roomid);
-            socket.emit('myRoom', user.myRoom(socket.id));
+            socket.emit('room-data', user.getRoomData(socket.id));
         });
 
-        socket.on('leaveRoom', () => {
+        socket.on('leave-room', () => {
             user.leaveRoom(socket.id);
         });
 
-        socket.on('myRoom', () => {
-            socket.emit('myRoom', user.myRoom(socket.id));
+        socket.on('room-data', () => {
+            socket.emit('room-data', user.getRoomData(socket.id));
         });
 
         socket.on('disconnect', () => {

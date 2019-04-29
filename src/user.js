@@ -228,7 +228,7 @@ module.exports = (io) => {
         });
     };
 
-    self.myRoom = (socketid) => {
+    self.getRoomData = (socketid) => {
         if (!self.logined(socketid)) return;
         let res = {
             roomid: self.connections[socketid].roomid,
@@ -243,7 +243,7 @@ module.exports = (io) => {
         return res;
     };
 
-    self.myID = (socketid) => {
+    self.getUsername = (socketid) => {
         return self.connections[socketid].id;
     };
 
