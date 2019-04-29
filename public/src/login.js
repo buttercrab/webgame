@@ -84,17 +84,13 @@ function leaveRoom() {
     socket.emit('leaveRoom');
 }
 
-function applyRooms() {
-    console.log(roomData);
-}
-
 function getRooms() {
     socket.emit('getRooms');
 }
 
-socket.on('rooms', rooms => {
-    roomData = rooms;
-    applyRooms();
+socket.on('myRoom', msg => {
+    myRoomID = msg;
+    refresh();
 });
 
 socket.on('login', msg => {
@@ -373,20 +369,64 @@ function getRoomHTML() {
     <div class="room-list-footer-github">
         <svg></svg>
     </div>
-    <div class="room-list-make-room">make new room<div class="room-list-make-room-icon">
-        <svg></svg>
-    </div></div>
+    <div class="room-list-make-room">make new room</div>
+    <div class="room-list-make-room-icon">
+        <svg id="add-icon" onclick="makeRoomClicked()" viewBox="0 0 52 52">
+            <path d="M26,0C11.664,0,0,11.663,0,26s11.664,26,26,26s26-11.663,26-26S40.336,0,26,0z M26,50C12.767,50,2,39.233,2,26 S12.767,2,26,2s24,10.767,24,24S39.233,50,26,50z"/>
+            <path d="M38.5,25H27V14c0-0.553-0.448-1-1-1s-1,0.447-1,1v11H13.5c-0.552,0-1,0.447-1,1s0.448,1,1,1H25v12c0,0.553,0.448,1,1,1 s1-0.447,1-1V27h11.5c0.552,0,1-0.447,1-1S39.052,25,38.5,25z"/>
+        </svg>
+    </div>
 </div>`; // TODO: add logout, make room, refresh buttons
 
     return res;
 }
 
+let usernamePopupViewOn = 0;
+let makeroomPopupViewOn = 0;
+
+function deleteAccountClicked() {
+    //TODO
+}
+
 function usernameClicked() {
-    createDiv(`
+    if (usernamePopupViewOn === 0) {
+        createDiv(`
 <div class="username-popup">
-    <div class="username-popup-item">logout</div>` +
-    (isGuest || `<div class="username-popup-item warning">delete account</div>`) +
+    <div class="username-popup-item" onclick="logout()">logout</div>` +
+(isGuest || `<div class="username-popup-item warning" onclick="deleteAccountClicked()">delete account</div>`) +
 `</div>`).addClass('username-popup-wrap');
+        usernamePopupViewOn = 1;
+    } else {
+        const element = document.getElementsByClassName('username-popup-wrap')[0];
+        element.parentNode.removeChild(element);
+        usernamePopupViewOn = 0;
+    }
+}
+
+function makeRoomSubmit() {
+    const name = document.getElementById('room-name').value;
+    makeroomPopupViewOn = 0;
+    makeRoom(name);
+}
+
+function makeRoomClicked() {
+    if (makeroomPopupViewOn === 0) {
+        createDiv(`
+<div class="make-room-popup">
+    <input class="make-room-popup-input" id="room-name" placeholder="Room Name"/>
+    <div class="make-room-popup-submit" onclick="makeRoomSubmit()">make</div>
+</div>`).addClass('make-room-popup-wrap');
+
+        document.getElementById('room-name').addEventListener('keyup', event => {
+            if (event.key === 'Enter') makeRoomSubmit();
+        });
+
+        makeroomPopupViewOn = 1;
+    } else {
+        const element = document.getElementsByClassName('make-room-popup-wrap')[0];
+        element.parentNode.removeChild(element);
+        makeroomPopupViewOn = 0;
+    }
 }
 
 function makeRoomList() {

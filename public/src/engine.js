@@ -2,6 +2,7 @@ function engine() {
     const self = this;
 
     self.objects = [];
+    self.pos = createVector(0, 0);
 
     self.set = (object) => {
         self.objects.push(object);

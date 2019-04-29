@@ -446,7 +446,7 @@
         .room-list .item {
             position: relative;
             border-radius: 5px;
-            border: #222222 1px solid;
+            border: #a1a1a1 1px solid;
             width: 460px;
             height: 80px;
             top: 0;
@@ -534,35 +534,149 @@
         }
 
         .room-list-username {
+            position: absolute;
             cursor: pointer;
+            color: #eeeeee;
+            left: 30px;
+            bottom: 15px;
+            font-size: 20px;
         }
 
         .room-list-footer-github {
-
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 15px;
+            margin: 0 auto;
+            width: 30px;
+            height: 30px;
         }
 
         .room-list-make-room {
-
+            position: absolute;
+            color: #eeeeee;
+            right: 55px;
+            bottom: 15px;
+            font-size: 13px;
         }
 
         .room-list-make-room-icon {
-
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            right: 30px;
+            bottom: 15px;
+            cursor: pointer;
         }
 
         .username-popup-wrap {
-
+            position: absolute;
+            bottom: 85px;
+            left: 0;
+            right: 0;
+            width: 450px;
+            height: 80px;
+            margin: 0 auto;
         }
 
         .username-popup {
-
+            position: absolute;
+            left: 0;
+            width: 150px;
+            height: 57px;
+            background: white;
+            border-radius: 5px;
+            border: 1px #949494 solid;
+            box-shadow: 0 0 6px #c7c7c7;
         }
 
         .username-popup-item {
+            position: relative;
+            height: 20px;
+            width: 140px;
+            left: 0;
+            right: 0;
+            margin: 5px auto;
+            border: 1px #949494 solid;
+            border-radius: 3px;
+            color: #222222;
+            text-align: center;
+            font-size: 15px;
+            cursor: pointer;
+        }
 
+        .username-popup-item:hover {
+            -webkit-transition: all 0.3s ease;
+            background: #efefef;
         }
 
         .username-popup-item.warning {
+            color: #de3226;
+        }
 
+        .username-popup-item.warning:hover {
+            -webkit-transition: all 0.3s ease;
+            background: #efc4bf;
+        }
+
+        #add-icon {
+            fill: #eeeeee;
+        }
+
+        .make-room-popup-wrap {
+            position: absolute;
+            bottom: 85px;
+            left: 0;
+            right: 0;
+            width: 450px;
+            height: 80px;
+            margin: 0 auto;
+        }
+
+        .make-room-popup {
+            position: absolute;
+            right: 0;
+            width: 150px;
+            height: 57px;
+            background: white;
+            border-radius: 5px;
+            border: 1px #949494 solid;
+            box-shadow: 0 0 6px #c7c7c7;
+        }
+
+        .make-room-popup-input {
+            position: absolute;
+            top: 5px;
+            height: 20px;
+            width: 140px;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            border-radius: 3px;
+            outline: none;
+            border: 1px #949494 solid;
+            color: #222222;
+            font-size: 15px;
+        }
+
+        .make-room-popup-submit {
+            position: absolute;
+            top: 30px;
+            height: 20px;
+            width: 140px;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            border-radius: 3px;
+            text-align: center;
+            border: 1px #949494 solid;
+            color: #222222;
+            font-size: 15px;
+        }
+
+        .make-room-popup-submit:hover {
+            -webkit-transition: all 0.3s ease;
+            background: #efefef;
         }
     </style>
     <script src="https://buttercrab.ml/public/src/connection.js" type="application/javascript"></script>
