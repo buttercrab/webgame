@@ -39,13 +39,13 @@ peer.on('connection', () => {
 
 peer.on('data', msg => {
     const data = JSON.parse(msg);
-    switch (data.type) {
-        case 'heartbeat':
-            setTimeout(() => {
-                peer.send(JSON.stringify({
-                    type: 'heartbeat'
-                }));
-            }, 10000);
-            break;
+    if (data.type === 'heartbeat') {
+        setTimeout(() => {
+            peer.send(JSON.stringify({
+                type: 'heartbeat'
+            }));
+        }, 10000);
+    } else {
+        e.data(data);
     }
 });

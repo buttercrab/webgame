@@ -1,5 +1,5 @@
 let logined = undefined, roomData = {}, loginViewState = 0;
-let registerFailMsg = '', loginFailMsg = '', myRoomID = '', username = '', isGuest = false;
+let registerFailMsg = '', loginFailMsg = '', myRoomData = '', username = '', isGuest = false;
 
 socket.on('heartbeat', () => {
     setTimeout(() => {
@@ -89,7 +89,7 @@ function getRooms() {
 }
 
 socket.on('myRoom', msg => {
-    myRoomID = msg;
+    myRoomData = msg;
     refresh();
 });
 

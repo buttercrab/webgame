@@ -13,10 +13,13 @@ module.exports = (roomid) => {
         let res = JSON.stringify(self.datas);
         for(let id in self.users)
             self.users[id].send(res);
+        self.datas = {};
     };
 
     self.data = (id, data) => {
-        self.datas[id] = data;
+        if(self.datas[id] === undefined)
+            self.datas[id] = [];
+        self.datas[id].push(data);
     };
 
     self.interval = setInterval(self.update, 20);

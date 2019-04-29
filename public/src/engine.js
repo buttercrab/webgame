@@ -1,22 +1,46 @@
 function engine() {
     const self = this;
 
-    self.objects = [];
+    self._camera = createSprite(0, 0, 0, 0);
+    self.player = entity(socket.id);
+    self.players = entities(); // includes enemy
 
-    self.set = (object) => {
-        self.objects.push(object);
-    };
+    for(let id in myRoomData) {
+
+    }
+
+    self.bullets = new Group();
+    self.map = new Group();
+    self.items = new Group();
+
+    self.shake = createVector(0, 0);
+    self.cameraA = 0;
 
     self.update = () => {
-        for(let i in self.objects) {
-            self.objects[i].addForces(createVector(0, 1));
-            self.objects[i].update();
-        }
+        self.player.update();
+
     };
 
     self.draw = () => {
-        for(let i in self.objects) {
-            self.objects[i].draw(self.objects[0].pos);
+        let diff = p5.Vector.sub(self._camera.position, self.player.position);
+        if(abs(diff.x) > 80 || abs(diff.y) > 50 || self.cameraA) {
+            self.cameraA = diff.mag() / 100;
+            self._camera.addSpeed(self.cameraA, diff.heading());
+        }
+        camera.position.set(self._camera.position);
+        camera.zoom = min(width / 480, height / 300);
+        drawSprites();
+    };
+
+    self.data = msg => {
+        for(let id in msg) {
+            for(let i in msg[id]) {
+                self.players.data(id, msg[id][i]);
+            }
         }
     };
+
+    return self;
 }
+
+let e = engine();

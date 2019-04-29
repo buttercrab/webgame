@@ -141,7 +141,7 @@ module.exports = (io) => {
                 self.connections[socket.id].peer.send(JSON.stringify({
                     type: 'heartbeat'
                 }));
-            } else if(self.connections[socket.id].roomid) {
+            } else if (self.connections[socket.id].roomid) {
                 self.room[self.connections[socket.id].roomid].game.data(self.connections[socket.id].id, data);
             }
         });
@@ -230,7 +230,17 @@ module.exports = (io) => {
 
     self.myRoom = (socketid) => {
         if (!self.logined(socketid)) return;
-        return self.connections[socketid].roomid;
+        let res = {
+            roomid: self.connections[socketid].roomid,
+            users: {}
+        };
+        for (let i in self.room[self.connections[socketid].roomid].ids) {
+            res.users[i] = {
+                king: self.room[self.connections[socketid].roomid].ids[i],
+                name: self.connections[i].id
+            };
+        }
+        return res;
     };
 
     self.myID = (socketid) => {

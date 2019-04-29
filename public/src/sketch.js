@@ -8,6 +8,8 @@ function setup() {
 
     mainFont = loadFont('https://buttercrab.ml/public/font?fontName=Raleway&fontFamily=Regular');
 
+    frameRate(50);
+
     mgr = new SceneManager();
     mgr.showScene(Waiting);
 }
