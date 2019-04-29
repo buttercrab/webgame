@@ -369,9 +369,24 @@ function getRoomHTML() {
 </div>
 <div class="room-list-subtitle">rooms</div>
 <div class="room-list-footer">
+    <div class="room-list-username" onclick="usernameClicked()">${isGuest ? 'logined as guest' : username}</div>
+    <div class="room-list-footer-github">
+        <svg></svg>
+    </div>
+    <div class="room-list-make-room">make new room<div class="room-list-make-room-icon">
+        <svg></svg>
+    </div></div>
 </div>`; // TODO: add logout, make room, refresh buttons
 
     return res;
+}
+
+function usernameClicked() {
+    createDiv(`
+<div class="username-popup">
+    <div class="username-popup-item">logout</div>` +
+    (isGuest || `<div class="username-popup-item warning">delete account</div>`) +
+`</div>`).addClass('username-popup-wrap');
 }
 
 function makeRoomList() {

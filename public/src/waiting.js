@@ -1,13 +1,13 @@
 function Waiting() {
     this.draw = () => {
-        if(width !== window.innerWidth || height !== window.innerHeight)
+        if (width !== window.innerWidth || height !== window.innerHeight)
             refresh();
 
         background('#aaa');
 
-        if(!logined) return;
-        if(myRoomID === '') return;
+        if (!logined) return;
+        if (myRoomID === '') return;
 
-
+        
     }
 }
