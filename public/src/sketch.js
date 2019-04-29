@@ -1,5 +1,4 @@
 let x = 0, y = 0;
-let keyOn = {};
 let mgr;
 let mainFont;
 
