@@ -5,8 +5,8 @@ function Waiting() {
 
         background('#aaa');
 
-        if (!logined) return;
-        if (myRoomID === '') return;
+        if (!user.logined) return;
+        if (!roomData.roomid) return;
 
         e.update();
         e.draw();

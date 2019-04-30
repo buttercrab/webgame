@@ -345,7 +345,7 @@ function getRoomHTML() {
 <div class="room-list">
 <div class="room-list-scroll">`;
 
-    for (let roomid in roomData) {
+    for (let roomid in roomList) {
         res += `
 <div class="room-list item" onclick="joinRoom('${roomid}')">
     <div class="room-list-content">
@@ -364,7 +364,7 @@ function getRoomHTML() {
 </div>
 <div class="room-list-subtitle">rooms</div>
 <div class="room-list-footer">
-    <div class="room-list-username" onclick="usernameClicked()">${isGuest ? 'logined as guest' : username}</div>
+    <div class="room-list-username" onclick="usernameClicked()">${user.isGuest ? 'logined as guest' : user.name}</div>
     <div class="room-list-footer-github">
         <svg></svg>
     </div>
@@ -437,7 +437,7 @@ function makeRoomList() {
 function refresh() {
     createCanvas(window.innerWidth, window.innerHeight);
 
-    if (logined === undefined) {
+    if (user.logined === undefined) {
         startLoading();
         return;
     }
@@ -445,8 +445,8 @@ function refresh() {
         removeElements();
         onLoading = false;
     }
-    if (logined) {
-        if (myRoomID === '')
+    if (user.logined) {
+        if (!roomData.roomid)
             makeRoomList();
         return;
     }

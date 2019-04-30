@@ -4,9 +4,10 @@ function engine() {
     self._camera = createSprite(0, 0, 0, 0);
     self.player = entity(socket.id);
     self.players = entities(); // includes enemy
+    self.players.add(self.player);
 
-    for(let id in myRoomData) {
-
+    for(let id in roomData.users) {
+        self.players.add(entity(id));
     }
 
     self.bullets = new Group();
@@ -18,7 +19,7 @@ function engine() {
 
     self.update = () => {
         self.player.update();
-
+        self.players.update();
     };
 
     self.draw = () => {
@@ -43,4 +44,4 @@ function engine() {
     return self;
 }
 
-let e = engine();
+let e;
