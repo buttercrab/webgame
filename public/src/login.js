@@ -429,8 +429,6 @@ function makeRoomClicked() {
 }
 
 function makeRoomList() {
-    removeElements();
-
     createDiv(self.getRoomHTML()).addClass('room-list-wrap');
 }
 
@@ -446,6 +444,7 @@ function refresh() {
         onLoading = false;
     }
     if (user.logined) {
+        removeElements();
         if (!roomData.roomid)
             makeRoomList();
         return;

@@ -232,6 +232,7 @@ module.exports = (io) => {
         if (!self.logined(socketid)) return;
         let res = {
             roomid: self.connections[socketid].roomid,
+            name: self.room[self.connections[socketid].roomid].name,
             users: {}
         };
         for (let i in self.room[self.connections[socketid].roomid].ids) {

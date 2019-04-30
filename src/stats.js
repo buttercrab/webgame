@@ -4,6 +4,10 @@ module.exports = () => {
     self.valueDB = {};
     self.logDB = {};
 
+    self.changeValue = (key, callback) => {
+        self.valueDB[key] = callback(self.valueDB[key]);
+    };
+
     self.setValue = (key, value) => {
         self.valueDB[key] = value;
     };
