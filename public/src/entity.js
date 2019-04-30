@@ -5,6 +5,12 @@ function entity(id) {
     self.id = id;
     self.sprite.restitution = 0.9;
 
+    self.sprite.hit = bullet => {
+        if(bullet.shooter === self.id) {
+
+        }
+    };
+
     self.data = msg => {
         switch(msg.type) {
             case 'pos':

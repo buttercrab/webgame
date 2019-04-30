@@ -3,6 +3,7 @@ function engine() {
 
     self._camera = createSprite(0, 0, 0, 0);
     self.player = entity(socket.id);
+    self.player.id = 'entity';
     self.players = entities(); // includes enemy
     self.players.add(self.player);
 
