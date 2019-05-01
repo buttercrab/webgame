@@ -13,15 +13,6 @@ function Waiting() {
     };
 
     this.keyPressed = () => {
-        switch(keyCode) {
-            case 87:
-                break;
-            case 65:
-                break;
-            case 83:
-                break;
-            case 68:
-                break;
-        }
+        e.input(keyCode);
     };
 }

@@ -11,12 +11,12 @@ function engine() {
         self.players.add(entity(id));
     }
 
-    self.bullets = new Group();
+    self.bullets = bullets();
     self.map = new Group();
     self.items = new Group();
 
     self.shake = createVector(0, 0);
-    self.cameraA = 0;
+    self.follow = false;
 
     self.update = () => {
         self.player.update();
@@ -25,9 +25,14 @@ function engine() {
 
     self.draw = () => {
         let diff = p5.Vector.sub(self._camera.position, self.player.position);
-        if(abs(diff.x) > 80 || abs(diff.y) > 50 || self.cameraA) {
-            self.cameraA = diff.mag() / 100;
-            self._camera.addSpeed(self.cameraA, diff.heading());
+        if(abs(diff.x) > 48 || abs(diff.y) > 30) {
+            self.follow = true;
+        } else if(diff.x === 0 && diff.y === 0) {
+            self.follow = false;
+        }
+        if(self.follow) {
+            let t = diff.mag();
+            self._camera.velocity.set(diff.normalize().mult(Math.tanh(t / 20) * 20));
         }
         camera.position.set(self._camera.position);
         camera.zoom = min(width / 480, height / 300);
@@ -40,6 +45,10 @@ function engine() {
                 self.players.data(id, msg[id][i]);
             }
         }
+    };
+
+    self.input = k => {
+
     };
 
     return self;

@@ -9,10 +9,6 @@ function bullet(pos, vel, type, shooter) {
     self.isDead = false;
     self.shooter = shooter;
 
-    self.update = () => {
-
-    };
-
     self.die = () => {
         self.isDead = true;
         self.sprite.remove();
@@ -40,7 +36,6 @@ function bullets() {
 
     self.update = () => {
         for(let i in self.d) {
-            self.d[i].update();
             if(self.d[i].dead())
                 delete self.d[i];
         }

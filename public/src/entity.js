@@ -14,7 +14,8 @@ function entity(id) {
     self.data = msg => {
         switch(msg.type) {
             case 'pos':
-                self.sprite.position.set(msg.data);
+                self.sprite.position.set(msg.data.pos);
+                self.sprite.velocity.set(msg.data.vel);
                 break;
             case 'fire':
                 self.fire(msg.data);
@@ -23,11 +24,17 @@ function entity(id) {
     };
 
     self.update = () => {
-
+        
     };
 
     self.fire = dir => {
+        let pos = self.sprite.position;
+        let vel = dir.copy().normalize();
+        e.bullets.add(bullet(pos, vel, self.type, self.id));
+    };
 
+    self.setType = type => {
+        self.type = type;
     };
 
     return self;
