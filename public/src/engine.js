@@ -18,6 +18,8 @@ function engine() {
     self.shake = createVector(0, 0);
     self.follow = false;
 
+
+
     self.update = () => {
         self.player.update();
         self.players.update();
@@ -48,7 +50,7 @@ function engine() {
     };
 
     self.input = k => {
-
+        eval(charData[self.player.type].input)(k, self.player);
     };
 
     return self;

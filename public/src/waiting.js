@@ -13,6 +13,8 @@ function Waiting() {
     };
 
     this.keyPressed = () => {
+        if(!user.logined) return;
+        if(!roomData.roomid) return;
         e.input(keyCode);
     };
 }

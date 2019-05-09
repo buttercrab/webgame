@@ -6,7 +6,7 @@ function entity(id) {
     self.sprite.restitution = 0.9;
 
     self.sprite.hit = bullet => {
-        if(bullet.shooter === self.id) {
+        if(bullet.shooter !== self.id) {
 
         }
     };
@@ -19,6 +19,9 @@ function entity(id) {
                 break;
             case 'fire':
                 self.fire(msg.data);
+                break;
+            case 'type':
+                self.setType(msg.data);
                 break;
         }
     };

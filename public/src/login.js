@@ -1,7 +1,7 @@
 let user = {};
 let roomList = {};
 let roomData = {};
-
+let charData = {};
 
 socket.on('heartbeat', () => {
     setTimeout(() => {
@@ -89,6 +89,10 @@ function leaveRoom() {
 function getRooms() {
     socket.emit('get-rooms');
 }
+
+socket.on('char-data', msg => {
+    charData = msg;
+});
 
 socket.on('room-data', msg => {
     roomData = msg;
@@ -349,11 +353,11 @@ function getRoomHTML() {
         res += `
 <div class="room-list item" onclick="joinRoom('${roomid}')">
     <div class="room-list-content">
-        <div>${roomData[roomid].name}</div>
+        <div>${roomList[roomid].name}</div>
         <div class="room-list-content-subtitle">${roomid}</div>
     </div>
     <div class="room-list-content right">
-        <div class="room-list-count">${roomData[roomid].count}</div>
+        <div class="room-list-count">${roomList[roomid].count}</div>
         <div class="room-list-join">Click to Join</div>
     </div>
 </div>`;
@@ -375,7 +379,7 @@ function getRoomHTML() {
             <path d="M38.5,25H27V14c0-0.553-0.448-1-1-1s-1,0.447-1,1v11H13.5c-0.552,0-1,0.447-1,1s0.448,1,1,1H25v12c0,0.553,0.448,1,1,1 s1-0.447,1-1V27h11.5c0.552,0,1-0.447,1-1S39.052,25,38.5,25z"/>
         </svg>
     </div>
-</div>`; // TODO: add logout, make room, refresh buttons
+</div>`; // TODO: add logout, refresh buttons
 
     return res;
 }
@@ -392,7 +396,7 @@ function usernameClicked() {
         createDiv(`
 <div class="username-popup">
     <div class="username-popup-item" onclick="logout()">logout</div>` +
-(isGuest || `<div class="username-popup-item warning" onclick="deleteAccountClicked()">delete account</div>`) +
+(user.isGuest || `<div class="username-popup-item warning" onclick="deleteAccountClicked()">delete account</div>`) +
 `</div>`).addClass('username-popup-wrap');
         usernamePopupViewOn = 1;
     } else {

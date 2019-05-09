@@ -142,6 +142,7 @@ function server(certs) {
 
     const io = require('socket.io')(server);
     const user = require('./src/user.js')(io);
+    const charData = JSON.parse(fs.readFileSync(__dirname + '/public/data/players.json').toString());
 
     io.use(sharedSession(session, {
         autoSave: true
@@ -156,6 +157,8 @@ function server(certs) {
             id: socket.id
         });
 
+        socket.emit('char-data', charData);
+
         socket.emit('heartbeat');
         socket.on('heartbeat', () => {
             socket.emit('heartbeat');
@@ -164,6 +167,11 @@ function server(certs) {
         socket.on('login', msg => {
             const logined = user.login(socket.id, msg.id, msg.pw);
             socket.emit('login', logined);
+            socket.emit('user-data', {
+                logined: user.logined(socket.id),
+                name: user.getUsername(socket.id),
+                id: socket.id
+            });
         });
 
         socket.on('logout', () => {
