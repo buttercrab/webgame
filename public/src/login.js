@@ -2,6 +2,7 @@ let user = {};
 let roomList = {};
 let roomData = {};
 let charData = {};
+let bullData = {};
 
 socket.on('heartbeat', () => {
     setTimeout(() => {
@@ -92,6 +93,10 @@ function getRooms() {
 
 socket.on('char-data', msg => {
     charData = msg;
+});
+
+socket.on('bull-data', msg => {
+    bullData = msg;
 });
 
 socket.on('room-data', msg => {

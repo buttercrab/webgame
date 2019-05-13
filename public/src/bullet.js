@@ -4,7 +4,7 @@ function bullet(pos, vel, type, shooter) {
     self.sprite = createSprite(0, 0, 0, 0);
     self.sprite.position.set(pos);
     self.sprite.velocity.set(vel);
-    self.sprite.id = 'bullet';
+    self.sprite.tag = 'bullet';
     self.type = type;
     self.isDead = false;
     self.shooter = shooter;
@@ -27,6 +27,10 @@ function bullets() {
     self._cnt = 0;
     self.d = {};
     self.group = new Group();
+    self.group.collide(self.group, (a, b) => {
+        a.remove();
+        b.remove();
+    });
 
     self.add = bullet => {
         bullet.sprite.num = self._cnt;

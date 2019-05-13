@@ -3,7 +3,9 @@ function entity(id) {
 
     self.sprite = createSprite(0, 0, 0, 0);
     self.id = id;
+    self.tag = 'entity';
     self.sprite.restitution = 0.9;
+    self.type = 'A';
 
     self.sprite.hit = bullet => {
         if(bullet.shooter !== self.id) {
@@ -27,7 +29,10 @@ function entity(id) {
     };
 
     self.update = () => {
-        
+        peer.send('data', JSON.stringify({
+            type: 'pos',
+
+        }));
     };
 
     self.fire = dir => {

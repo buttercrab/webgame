@@ -18,11 +18,18 @@ function engine() {
     self.shake = createVector(0, 0);
     self.follow = false;
 
-
+    self.players.group.collide(self.bullets.group, (a, b) => {
+        if(a.tag === 'bullet') {
+            self.players.d[b.id].hit(a);
+            a.remove();
+        } else {
+            self.players.d[a.id].hit(b);
+            b.remove();
+        }
+    });
 
     self.update = () => {
         self.player.update();
-        self.players.update();
     };
 
     self.draw = () => {
@@ -38,7 +45,11 @@ function engine() {
         }
         camera.position.set(self._camera.position);
         camera.zoom = min(width / 480, height / 300);
-        drawSprites();
+
+        self.map.draw();
+        self.items.draw();
+        self.bullets.group.draw();
+        self.players.group.draw();
     };
 
     self.data = msg => {
