@@ -8,13 +8,13 @@ function Waiting() {
         if (!user.logined) return;
         if (!roomData.roomid) return;
 
-        e.update();
-        e.draw();
+        engine.update();
+        engine.sketch();
     };
 
     this.keyPressed = () => {
         if(!user.logined) return;
         if(!roomData.roomid) return;
-        e.input(keyCode);
+        engine.input(keyCode);
     };
 }

@@ -75,14 +75,14 @@ function server(certs) {
         res.statusCode = 200;
         res.setHeader('content-type', 'text/html');
         fs.createReadStream(__dirname + '/public/src/index.html').pipe(res);
-        res.end();
+        // res.end();
     });
 
     app.get('/admin', (req, res) => {
         res.statusCode = 200;
         res.setHeader('content-type', 'text/html');
         fs.createReadStream(__dirname + '/public/src/admin.html').pipe(res);
-        res.end();
+        // res.end();
     });
 
     app.get('/public/font', (req, res) => {
@@ -94,12 +94,12 @@ function server(certs) {
         stream.on('open', () => {
             res.statusCode = 200;
             stream.pipe(res);
-            res.end();
+            // res.end();
         });
 
         stream.on('error', err => {
             res.statusCode = 404;
-            res.end();
+            // res.end();
         });
     });
 
@@ -112,12 +112,12 @@ function server(certs) {
         stream.on('open', () => {
             res.statusCode = 200;
             stream.pipe(res);
-            res.end();
+            // res.end();
         });
 
         stream.on('error', err => {
             res.statusCode = 404;
-            res.end();
+            // res.end();
         });
     });
 
@@ -125,7 +125,7 @@ function server(certs) {
         res.statusCode = 200;
         res.setHeader('content-type', 'text/html');
         fs.createReadStream(__dirname + '/public/src/404.html').pipe(res);
-        res.end();
+        // res.end();
     });
 
     require('http').createServer(lex.middleware(require('redirect-https')())).listen(8080);

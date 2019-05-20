@@ -1,4 +1,4 @@
-function engine() {
+function gameEngine() {
     const self = this;
 
     self._camera = createSprite(0, 0, 0, 0);
@@ -32,7 +32,7 @@ function engine() {
         self.player.update();
     };
 
-    self.draw = () => {
+    self.sketch = () => {
         let diff = p5.Vector.sub(self._camera.position, self.player.position);
         if(abs(diff.x) > 48 || abs(diff.y) > 30) {
             self.follow = true;
@@ -67,4 +67,4 @@ function engine() {
     return self;
 }
 
-let e;
+let engine;

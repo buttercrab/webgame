@@ -5,6 +5,7 @@ function entity(id) {
     self.id = id;
     self.tag = 'entity';
     self.sprite.restitution = 0.9;
+    self.sprite.setCollider('rectangle', 0, 0, 30, 30);
     self.type = 'A';
 
     self.sprite.hit = bullet => {
@@ -31,7 +32,10 @@ function entity(id) {
     self.update = () => {
         peer.send('data', JSON.stringify({
             type: 'pos',
-
+            data: {
+                pos: self.position,
+                vel: self.velocity
+            }
         }));
     };
 
@@ -69,8 +73,6 @@ function entities() {
             self.d[id].update();
         }
     };
-
-    self.draw = self.group.draw;
 
     return self;
 }
