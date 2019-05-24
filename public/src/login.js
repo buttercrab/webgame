@@ -458,6 +458,9 @@ function refresh() {
         removeElements();
         if (!roomData.roomid)
             makeRoomList();
+        else if(_engine === null) {
+            _engine = new Engine();
+        }
         return;
     }
 

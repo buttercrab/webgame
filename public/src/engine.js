@@ -1,17 +1,16 @@
-function gameEngine() {
+function Engine() {
     const self = this;
 
     self._camera = createSprite(0, 0, 0, 0);
-    self.player = entity(socket.id);
-    self.player.id = 'entity';
-    self.players = entities(); // includes enemy
+    self.player = new Entity(socket.id);
+    self.players = new Entities(); // includes enemy
     self.players.add(self.player);
 
     for(let id in roomData.users) {
-        self.players.add(entity(id));
+        self.players.add(new Entity(id));
     }
 
-    self.bullets = bullets();
+    self.bullets = new Bullets();
     self.map = new Group();
     self.items = new Group();
 
@@ -19,7 +18,7 @@ function gameEngine() {
     self.follow = false;
 
     self.players.group.collide(self.bullets.group, (a, b) => {
-        if(a.tag === 'bullet') {
+        if(a.tag === 'Bullet') {
             self.players.d[b.id].hit(a);
             a.remove();
         } else {
@@ -32,7 +31,7 @@ function gameEngine() {
         self.player.update();
     };
 
-    self.sketch = () => {
+    self.draw = () => {
         let diff = p5.Vector.sub(self._camera.position, self.player.position);
         if(abs(diff.x) > 48 || abs(diff.y) > 30) {
             self.follow = true;
@@ -43,13 +42,14 @@ function gameEngine() {
             let t = diff.mag();
             self._camera.velocity.set(diff.normalize().mult(Math.tanh(t / 20) * 20));
         }
-        camera.position.set(self._camera.position);
+        camera.position.x = self._camera.position.x;
+        camera.position.y = self._camera.position.y;
         camera.zoom = min(width / 480, height / 300);
 
-        self.map.draw();
-        self.items.draw();
-        self.bullets.group.draw();
-        self.players.group.draw();
+        // self.map.draw();
+        // self.items
+        drawSprites(self.bullets.group);
+        drawSprites(self.players.group);
     };
 
     self.data = msg => {
@@ -67,4 +67,4 @@ function gameEngine() {
     return self;
 }
 
-let engine;
+let _engine = null;

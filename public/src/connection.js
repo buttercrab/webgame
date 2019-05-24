@@ -46,6 +46,6 @@ peer.on('data', msg => {
             }));
         }, 10000);
     } else {
-        e.data(data);
+        _engine.data(data);
     }
 });

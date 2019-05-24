@@ -1,12 +1,13 @@
-function entity(id) {
+function Entity(id) {
     const self = this;
 
     self.sprite = createSprite(0, 0, 0, 0);
     self.id = id;
-    self.tag = 'entity';
+    self.tag = 'Entity';
     self.sprite.restitution = 0.9;
     self.sprite.setCollider('rectangle', 0, 0, 30, 30);
     self.type = 'A';
+    self.sprite.addAnimation('img', charData[self.type].img);
 
     self.sprite.hit = bullet => {
         if(bullet.shooter !== self.id) {
@@ -17,8 +18,8 @@ function entity(id) {
     self.data = msg => {
         switch(msg.type) {
             case 'pos':
-                self.sprite.position.set(msg.data.pos);
-                self.sprite.velocity.set(msg.data.vel);
+                self.sprite.position.set(msg.data.pos.x, msg.data.pos.y);
+                self.sprite.velocity.set(msg.data.vel.x, msg.data.pos.y);
                 break;
             case 'fire':
                 self.fire(msg.data);
@@ -33,8 +34,14 @@ function entity(id) {
         peer.send('data', JSON.stringify({
             type: 'pos',
             data: {
-                pos: self.position,
-                vel: self.velocity
+                pos: {
+                    x: self.sprite.position.x,
+                    y: self.sprite.position.y
+                },
+                vel: {
+                    x: self.sprite.velocity.x,
+                    y: self.sprite.velocity.y
+                }
             }
         }));
     };
@@ -42,7 +49,7 @@ function entity(id) {
     self.fire = dir => {
         let pos = self.sprite.position;
         let vel = dir.copy().normalize();
-        e.bullets.add(bullet(pos, vel, self.type, self.id));
+        e.bullets.add(Bullet(pos, vel, self.type, self.id));
     };
 
     self.setType = type => {
@@ -52,7 +59,7 @@ function entity(id) {
     return self;
 }
 
-function entities() {
+function Entities() {
     const self = this;
 
     self.d = {};

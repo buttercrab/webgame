@@ -66,7 +66,7 @@ new Turn({
 function server(certs) {
     const port = 8443;
     const app = require('express')();
-    // app.use(require('morgan')('dev'));
+    app.use(require('morgan')('dev'));
     app.use(session);
 
     app.enable('trust proxy');
@@ -143,7 +143,7 @@ function server(certs) {
     const io = require('socket.io')(server);
     const user = require('./src/user.js')(io);
     const charData = JSON.parse(fs.readFileSync(__dirname + '/public/data/players.json').toString());
-    const bullData = JSON.parse(fs.readFileSync(__dirname + '/public/data/bullet.json').toString());
+    const bullData = JSON.parse(fs.readFileSync(__dirname + '/public/data/Bullet.json').toString());
 
     io.use(sharedSession(session, {
         autoSave: true

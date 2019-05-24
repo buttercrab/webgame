@@ -1,10 +1,10 @@
-function bullet(pos, vel, type, shooter) {
+function Bullet(pos, vel, type, shooter) {
     const self = this;
 
     self.sprite = createSprite(0, 0, 0, 0);
     self.sprite.position.set(pos);
     self.sprite.velocity.set(vel);
-    self.sprite.tag = 'bullet';
+    self.sprite.tag = 'Bullet';
     self.type = type;
     self.isDead = false;
     self.shooter = shooter;
@@ -21,7 +21,7 @@ function bullet(pos, vel, type, shooter) {
     return self;
 }
 
-function bullets() {
+function Bullets() {
     const self = this;
 
     self._cnt = 0;
@@ -46,13 +46,13 @@ function bullets() {
     };
 
     self.collisionCallback = (sprite1, sprite2) => {
-        if(sprite1.id === 'bullet' && sprite2.id === 'bullet') {
+        if(sprite1.id === 'Bullet' && sprite2.id === 'Bullet') {
             sprite1.die();
             sprite2.die();
-        } else if(sprite1.id === 'bullet' && sprite2.id === 'entity') {
+        } else if(sprite1.id === 'Bullet' && sprite2.id === 'Entity') {
             sprite1.die();
             sprite2.hit(self.d[sprite1.num]);
-        } else if(sprite1.id === 'entity' && sprite2.id === 'bullet') {
+        } else if(sprite1.id === 'Entity' && sprite2.id === 'Bullet') {
             sprite2.die();
             sprite1.hit(self.d[sprite2.num]);
         }
