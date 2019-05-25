@@ -142,8 +142,8 @@ function server(certs) {
 
     const io = require('socket.io')(server);
     const user = require('./src/user.js')(io);
-    const charData = JSON.parse(fs.readFileSync(__dirname + '/public/data/players.json').toString());
-    const bullData = JSON.parse(fs.readFileSync(__dirname + '/public/data/Bullet.json').toString());
+    const charData = JSON.parse(fs.readFileSync(__dirname + '/public/data/entities.json').toString());
+    const bullData = JSON.parse(fs.readFileSync(__dirname + '/public/data/bullet.json').toString());
 
     io.use(sharedSession(session, {
         autoSave: true
