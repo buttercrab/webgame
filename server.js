@@ -66,7 +66,7 @@ new Turn({
 function server(certs) {
     const port = 8443;
     const app = require('express')();
-    app.use(require('morgan')('dev'));
+    // app.use(require('morgan')('dev'));
     app.use(session);
 
     app.enable('trust proxy');
@@ -239,7 +239,7 @@ function server(certs) {
  * @description checking certification that has been saved
  */
 
-lex.check({domains: ['buttercrab.ml']}).then(res => {
+lex.check({domains: ['buttercrab.ml', 'buttercrab.iptime.org']}).then(res => {
     if (res) {
         server(res);
         return;
@@ -247,7 +247,7 @@ lex.check({domains: ['buttercrab.ml']}).then(res => {
 
     lex.register({
         email: 'jaeyong0201@gmail.com',
-        domains: ['buttercrab.ml'],
+        domains: ['buttercrab.ml', 'buttercrab.iptime.org'],
         agreeTos: true,
         communityMember: true
     }).then(server, err => {

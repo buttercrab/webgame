@@ -1,4 +1,4 @@
-const socket = io('https://buttercrab.ml');
+const socket = io('https://buttercrab.iptime.org');
 
 let peer = new SimplePeer({
     initiator: true,
@@ -8,7 +8,7 @@ let peer = new SimplePeer({
     config: {
         iceServers: [
             {
-                urls: "turn:buttercrab.ml:8888",
+                urls: "turn:buttercrab.iptime.org:8888",
                 username: "buttercrab",
                 credential: "1234"
             }

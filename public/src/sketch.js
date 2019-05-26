@@ -6,7 +6,7 @@ function setup() {
     refresh();
     document.getElementById('defaultCanvas0').style.position = 'absolute';
 
-    mainFont = loadFont('https://buttercrab.ml/public/font?fontName=Raleway&fontFamily=Regular');
+    mainFont = loadFont('https://buttercrab.iptime.org/public/font?fontName=Raleway&fontFamily=Regular');
 
     frameRate(50);
 

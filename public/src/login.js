@@ -271,7 +271,7 @@ function viewLogin() {
 
     createDiv(`
 <div class="title">
-<!--    <img src="https://buttercrab.ml/public/img/logo.png" alt="Bang">-->
+<!--    <img src="https://buttercrab.iptime.org/public/img/logo.png" alt="Bang">-->
 Bang
 </div>
 <div class="form-structor" id="base">
@@ -350,7 +350,7 @@ Bang
 function getRoomHTML() {
     let res = `
 <div class="room-list-title">
-<!--    <img src="https://buttercrab.ml/public/img/logo-white.png" alt="Bang"/>-->
+<!--    <img src="https://buttercrab.iptime.org/public/img/logo-white.png" alt="Bang"/>-->
 Bang
 </div>
 <div class="room-list">
