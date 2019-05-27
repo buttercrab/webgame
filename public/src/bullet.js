@@ -39,20 +39,20 @@ function Bullets() {
     };
 
     self.update = () => {
-        for(let i in self.d) {
-            if(self.d[i].dead())
+        for (let i in self.d) {
+            if (self.d[i].dead())
                 delete self.d[i];
         }
     };
 
     self.collisionCallback = (sprite1, sprite2) => {
-        if(sprite1.id === 'Bullet' && sprite2.id === 'Bullet') {
+        if (sprite1.id === 'Bullet' && sprite2.id === 'Bullet') {
             sprite1.die();
             sprite2.die();
-        } else if(sprite1.id === 'Bullet' && sprite2.id === 'Entity') {
+        } else if (sprite1.id === 'Bullet' && sprite2.id === 'Entity') {
             sprite1.die();
             sprite2.hit(self.d[sprite1.num]);
-        } else if(sprite1.id === 'Entity' && sprite2.id === 'Bullet') {
+        } else if (sprite1.id === 'Entity' && sprite2.id === 'Bullet') {
             sprite2.die();
             sprite1.hit(self.d[sprite2.num]);
         }

@@ -16,10 +16,6 @@ let peer = new SimplePeer({
     }
 });
 
-peer.on('connection', () => {
-    console.log('peer connection successfully done');
-});
-
 peer.on('signal', data => {
     socket.emit('signal', {
         signal: data
@@ -30,15 +26,18 @@ socket.on('signal', msg => {
     peer.signal(msg.signal);
 });
 
-peer.on('connection', () => {
-    console.log('connections');
+peer.on('connect', () => {
     peer.send(JSON.stringify({
         type: 'heartbeat'
     }));
 });
 
 peer.on('data', msg => {
-    const data = JSON.parse(msg);
+    let data = "";
+    for(let i = 0; i < msg.length; i++)
+        data += String.fromCharCode(msg[i]);
+    data = JSON.parse(data);
+    console.log(data);
     if (data.type === 'heartbeat') {
         setTimeout(() => {
             peer.send(JSON.stringify({

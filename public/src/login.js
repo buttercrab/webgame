@@ -403,8 +403,8 @@ function usernameClicked() {
         createDiv(`
 <div class="username-popup">
     <div class="username-popup-item" onclick="logout()">logout</div>` +
-(user.isGuest || `<div class="username-popup-item warning" onclick="deleteAccountClicked()">delete account</div>`) +
-`</div>`).addClass('username-popup-wrap');
+            (user.isGuest || `<div class="username-popup-item warning" onclick="deleteAccountClicked()">delete account</div>`) +
+            `</div>`).addClass('username-popup-wrap');
         usernamePopupViewOn = 1;
     } else {
         const element = document.getElementsByClassName('username-popup-wrap')[0];
@@ -458,7 +458,7 @@ function refresh() {
         removeElements();
         if (!roomData.roomid)
             makeRoomList();
-        else if(_engine === null) {
+        else if (_engine === null) {
             _engine = new Engine();
         }
         return;

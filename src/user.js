@@ -131,9 +131,11 @@ module.exports = (io) => {
         });
 
         self.connections[socket.id].peer.on('data', msg => {
-            let data;
+            let data = "";
+            for(let i = 0; i < msg.length; i++)
+                data += String.fromCharCode(msg[i]);
             try {
-                data = JSON.parse(msg);
+                data = JSON.parse(data);
             } catch (e) {
                 return;
             }
@@ -141,8 +143,8 @@ module.exports = (io) => {
                 self.connections[socket.id].peer.send(JSON.stringify({
                     type: 'heartbeat'
                 }));
-            } else if (self.connections[socket.id].roomid) {
-                self.room[self.connections[socket.id].roomid].game.data(self.connections[socket.id].id, data);
+            } else if (self.connections[socket.id].roomid !== undefined) {
+                self.room[self.connections[socket.id].roomid].game.data(socket.id, data);
             }
         });
 
@@ -184,6 +186,7 @@ module.exports = (io) => {
             name: name,
             game: game(roomid)
         };
+        self.room[roomid].game.connect(socketid, self.connections[socketid].peer);
         self.room[roomid].ids[socketid] = true; // true for room head false for else
     };
 
@@ -205,6 +208,7 @@ module.exports = (io) => {
         self.connections[socketid].socket.join(roomid);
         self.connections[socketid].roomid = roomid;
         self.room[roomid].ids[socketid] = false;
+        self.room[roomid].game.connect(socketid, self.connections[socketid].peer);
         self.room[roomid].count++;
         return true;
     };

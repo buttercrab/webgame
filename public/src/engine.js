@@ -3,10 +3,11 @@ function Engine() {
 
     self._camera = createSprite(0, 0, 0, 0);
     self.player = new Entity(socket.id);
+    self.player.sprite.draw = () => {};
     self.players = new Entities(); // includes enemy
     self.players.add(self.player);
 
-    for(let id in roomData.users) {
+    for (let id in roomData.users) {
         self.players.add(new Entity(id));
     }
 
@@ -18,7 +19,7 @@ function Engine() {
     self.follow = false;
 
     self.players.group.collide(self.bullets.group, (a, b) => {
-        if(a.tag === 'Bullet') {
+        if (a.tag === 'Bullet') {
             self.players.d[b.id].hit(a);
             a.remove();
         } else {
@@ -33,12 +34,12 @@ function Engine() {
 
     self.draw = () => {
         let diff = p5.Vector.sub(self._camera.position, self.player.position);
-        if(abs(diff.x) > 48 || abs(diff.y) > 30) {
+        if (abs(diff.x) > 48 || abs(diff.y) > 30) {
             self.follow = true;
-        } else if(diff.x === 0 && diff.y === 0) {
+        } else if (diff.x === 0 && diff.y === 0) {
             self.follow = false;
         }
-        if(self.follow) {
+        if (self.follow) {
             let t = diff.mag();
             self._camera.velocity.set(diff.normalize().mult(Math.tanh(t / 20) * 20));
         }
@@ -53,8 +54,8 @@ function Engine() {
     };
 
     self.data = msg => {
-        for(let id in msg) {
-            for(let i in msg[id]) {
+        for (let id in msg) {
+            for (let i in msg[id]) {
                 self.players.data(id, msg[id][i]);
             }
         }
