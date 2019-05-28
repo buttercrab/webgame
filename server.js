@@ -144,6 +144,7 @@ function server(certs) {
     const user = require('./src/user.js')(io);
     const charData = JSON.parse(fs.readFileSync(__dirname + '/public/data/entities.json').toString());
     const bullData = JSON.parse(fs.readFileSync(__dirname + '/public/data/bullet.json').toString());
+    const mapData = JSON.parse(fs.readFileSync(__dirname + '/public/data/map.json').toString());
 
     io.use(sharedSession(session, {
         autoSave: true
@@ -160,6 +161,7 @@ function server(certs) {
 
         socket.emit('char-data', charData);
         socket.emit('bull-data', bullData);
+        socket.emit('map-data', mapData);
 
         socket.emit('heartbeat');
         socket.on('heartbeat', () => {

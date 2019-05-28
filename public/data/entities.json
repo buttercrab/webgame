@@ -1,10 +1,11 @@
 {
-  "A": {
+  "1": {
     "type": "player",
     "health": 100,
     "input": "((k,p)=>{if(k==32){p.sprite.velocity.set(0,-15)}})",
     "update": "((p)=>{if(keyIsDown(65)){p.sprite.position.add(-7,0)}if(keyIsDown(68)){p.sprite.position.add(7,0)}})",
     "img": "https://buttercrab.iptime.org/public/img/entity_1.png",
-    "bullet": "A"
+    "mouse": "((p)=>{p.fire(p5.Vector.diff(createVector(camera.mouseX, camera.mouseY), p.sprite.position})",
+    "bullet": "1"
   }
 }

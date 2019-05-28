@@ -3,15 +3,17 @@ function Entity(id) {
 
     self.sprite = createSprite(0, 0, 0, 0);
     self.id = id;
-    self.tag = 'Entity';
+    self.sprite.tag = 'Entity';
     self.sprite.restitution = 0.9;
     self.sprite.setCollider('rectangle', 0, 0, 30, 30);
     self.type = 'A';
     self.sprite.addAnimation('img', charData[self.type].img);
+    self.health = charData[self.type].health;
 
     self.sprite.hit = bullet => {
-        if (bullet.shooter !== self.id) {
-
+        if (_engine.bullets.d[bullet.num].shooter !== self.id) {
+            self.health -= bullData[_engine.bullets.d[bullet.num].type].damage;
+            bullet.remove();
         }
     };
 
@@ -31,7 +33,7 @@ function Entity(id) {
     };
 
     self.update = () => {
-        self.sprite.velocity.add(0, 0.7);
+        self.sprite.velocity.add(0, 1);
         if(self.sprite.position.y >= 300) {
             self.sprite.position.y = 300;
             self.sprite.velocity.y = 0;

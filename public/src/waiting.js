@@ -8,7 +8,8 @@ function Waiting() {
         if (!user.logined) return;
         if (!roomData.roomid) return;
 
-        if(_engine.data_on === false) return;
+        background('#fff');
+
         _engine.update();
         _engine.draw();
     };

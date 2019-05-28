@@ -3,6 +3,7 @@ let roomList = {};
 let roomData = {};
 let charData = {};
 let bullData = {};
+let mapData = {};
 
 socket.on('heartbeat', () => {
     setTimeout(() => {
@@ -97,6 +98,10 @@ socket.on('char-data', msg => {
 
 socket.on('bull-data', msg => {
     bullData = msg;
+});
+
+socket.on('map-data', msg => {
+    mapData = msg;
 });
 
 socket.on('room-data', msg => {
