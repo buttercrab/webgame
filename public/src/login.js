@@ -154,6 +154,14 @@ socket.on('get-rooms', data => {
     refresh();
 });
 
+socket.on('join-room', data => {
+    _engine.addPlayer(data.id);
+});
+
+socket.on('leave-room', data => {
+    _engine.removePlayer(data.id);
+});
+
 ///==========
 
 let registerFailMsg = '', loginFailMsg = '';

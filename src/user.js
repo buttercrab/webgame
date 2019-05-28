@@ -210,6 +210,7 @@ module.exports = (io) => {
         self.room[roomid].ids[socketid] = false;
         self.room[roomid].game.connect(socketid, self.connections[socketid].peer);
         self.room[roomid].count++;
+        self.io.of(roomid).emit('join-room', {id: socketid});
         return true;
     };
 
@@ -230,6 +231,7 @@ module.exports = (io) => {
         delete self.connections[socketid].roomid;
         self.connections[socketid].socket.leave(roomid, err => {
         });
+        self.io.of(roomid).emit('leave-room', {id: socketid});
     };
 
     self.getRoomData = (socketid) => {

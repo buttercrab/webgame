@@ -34,16 +34,20 @@ function Engine() {
     };
 
     self.draw = () => {
-        let p = self.players.d[user.id].sprite.position;
-        let mouse = createVector(camera.mouseX, camera.mouseY);
-        let diff = p5.Vector.sub(mouse, p).mult(0.1);
+        let p = self.players.d[user.id].sprite.position.copy();
+        let v = self.players.d[user.id].sprite.velocity;
+        let mouse = createVector(/*camera.mouseX, camera.mouseY*/0, 0);
+        let diff = p5.Vector.sub(mouse, p).mult(0.03);
 
-        camera.position.set(p5.Vector.add(p, diff));
-        camera.zoom = min(width / 480, height / 300);
+        // p.add(diff);
+        camera.position.set(p);
+        camera.zoom = min(width / 480, height / 300) / 2;
+        // p.sub(diff).sub(v);
 
-        console.log('cam: ' + camera.position.x + ' ' + camera.position.y + ' pos: ' + p.x + ' ' + p.y + ' time: ' + new Date().getTime());
+        console.log('cam: ' + camera.position.x + ' ' + camera.position.y + ' pos: ' + p.x + ' ' + p.y);
 
-        camera.on();
+        v.set(0, 0);
+
         drawSprites(self.bullets.group);
         drawSprites(self.players.group);
         drawSprite(self.a);
