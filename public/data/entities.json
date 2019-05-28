@@ -2,7 +2,8 @@
   "A": {
     "type": "player",
     "health": 100,
-    "input": "((k,p)=>{if(k==32){p.sprite.velocity.set(0,-1)}else if(k==65){p.sprite.position.add(-5,0)}else if(k==68){p.sprite.position.add(5,0)}})",
+    "input": "((k,p)=>{if(k==32){p.sprite.velocity.set(0,-15)}})",
+    "update": "((p)=>{if(keyIsDown(65)){p.sprite.position.add(-7,0)}if(keyIsDown(68)){p.sprite.position.add(7,0)}})",
     "img": "https://buttercrab.iptime.org/public/img/entity_1.png",
     "bullet": "A"
   }

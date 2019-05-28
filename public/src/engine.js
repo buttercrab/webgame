@@ -1,7 +1,7 @@
 function Engine() {
     const self = this;
 
-    self._camera = createSprite(0, 0, 0, 0);
+    self.a = createSprite(10, 10, 10, 10);
     self.player = new Entity(socket.id);
     self.player.sprite.draw = () => {};
     self.players = new Entities(); // includes enemy
@@ -12,11 +12,11 @@ function Engine() {
     }
 
     self.bullets = new Bullets();
-    self.map = new Group();
-    self.items = new Group();
+    // self.map = new Group();
+    // self.items = new Group();
 
+    self.data_on = false;
     self.shake = createVector(0, 0);
-    self.follow = false;
 
     self.players.group.collide(self.bullets.group, (a, b) => {
         if (a.tag === 'Bullet') {
@@ -30,35 +30,41 @@ function Engine() {
 
     self.update = () => {
         self.player.update();
+        eval(charData[self.player.type].update)(self.player);
     };
 
     self.draw = () => {
-        let diff = p5.Vector.sub(self._camera.position, self.player.position);
-        if (abs(diff.x) > 48 || abs(diff.y) > 30) {
-            self.follow = true;
-        } else if (diff.x === 0 && diff.y === 0) {
-            self.follow = false;
-        }
-        if (self.follow) {
-            let t = diff.mag();
-            self._camera.velocity.set(diff.normalize().mult(Math.tanh(t / 20) * 20));
-        }
-        camera.position.x = self._camera.position.x;
-        camera.position.y = self._camera.position.y;
+        let p = self.players.d[user.id].sprite.position;
+        let mouse = createVector(camera.mouseX, camera.mouseY);
+        let diff = p5.Vector.sub(mouse, p).mult(0.1);
+
+        camera.position.set(p5.Vector.add(p, diff));
         camera.zoom = min(width / 480, height / 300);
 
-        // self.map.draw();
-        // self.items
+        console.log('cam: ' + camera.position.x + ' ' + camera.position.y + ' pos: ' + p.x + ' ' + p.y + ' time: ' + new Date().getTime());
+
+        camera.on();
         drawSprites(self.bullets.group);
         drawSprites(self.players.group);
+        drawSprite(self.a);
+        camera.off();
     };
 
     self.data = msg => {
+        self.data_on = true;
         for (let id in msg) {
             for (let i in msg[id]) {
                 self.players.data(id, msg[id][i]);
             }
         }
+    };
+
+    self.addPlayer = id => {
+        self.players.add(new Entity(id));
+    };
+
+    self.removePlayer = id => {
+        self.players.remove(id);
     };
 
     self.input = k => {

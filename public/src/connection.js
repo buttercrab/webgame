@@ -32,12 +32,13 @@ peer.on('connect', () => {
     }));
 });
 
+let lastTime = 0;
+
 peer.on('data', msg => {
     let data = "";
     for(let i = 0; i < msg.length; i++)
         data += String.fromCharCode(msg[i]);
     data = JSON.parse(data);
-    console.log(data);
     if (data.type === 'heartbeat') {
         setTimeout(() => {
             peer.send(JSON.stringify({
@@ -45,6 +46,9 @@ peer.on('data', msg => {
             }));
         }, 10000);
     } else {
-        _engine.data(data);
+        if(lastTime < data.time) {
+            lastTime = data.time;
+            _engine.data(data.data);
+        }
     }
 });

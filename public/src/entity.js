@@ -19,7 +19,7 @@ function Entity(id) {
         switch (msg.type) {
             case 'pos':
                 self.sprite.position.set(msg.data.pos.x, msg.data.pos.y);
-                self.sprite.velocity.set(msg.data.vel.x, msg.data.pos.y);
+                self.sprite.velocity.set(0, 0);
                 break;
             case 'fire':
                 self.fire(msg.data);
@@ -31,17 +31,17 @@ function Entity(id) {
     };
 
     self.update = () => {
-        self.sprite.velocity.add(0, 0.2);
+        self.sprite.velocity.add(0, 0.5);
+        if(self.sprite.position.y >= 300) {
+            self.sprite.position.y = 300;
+            self.sprite.velocity.y = 0;
+        }
         peer.send(JSON.stringify({
             type: 'pos',
             data: {
                 pos: {
                     x: self.sprite.position.x,
                     y: self.sprite.position.y
-                },
-                vel: {
-                    x: self.sprite.velocity.x,
-                    y: self.sprite.velocity.y
                 }
             }
         }));
@@ -72,14 +72,17 @@ function Entities() {
         self.d[entity.id] = entity;
     };
 
-    self.data = (id, msg) => {
-        self.d[id].data(msg);
+    self.remove = id => {
+        for(let i = 0; i < self.group.length; i++) {
+            let s = self.group.get(i);
+            if(s.id === id) {
+                s.remove();
+            }
+        }
     };
 
-    self.update = () => {
-        for (let id in self.d) {
-            self.d[id].update();
-        }
+    self.data = (id, msg) => {
+        self.d[id].data(msg);
     };
 
     return self;
