@@ -6,8 +6,10 @@ function Entity(id) {
     self.sprite.tag = 'Entity';
     self.sprite.restitution = 0;
     self.type = 'A';
-    self.sprite.setCollider('circle', 0, 0, 28, 28);
+    self.sprite.setCollider('circle', 0, 0, 28);
     self.health = charData[self.type].health;
+
+    self.sprite.limitSpeed(100);
 
     self.sprite.draw = () => {
         if (user.id === self.sprite.id) fill('#60aa4b');

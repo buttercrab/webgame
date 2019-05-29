@@ -16,7 +16,10 @@ module.exports = (roomid) => {
     self.update = () => {
         let res = JSON.stringify({type: 'data', data: self.datas});
         for(let id in self.users) {
-            self.users[id].send(res);
+            try {
+                self.users[id].send(res);
+            } catch (e) {
+            }
         }
         self.datas = {};
     };

@@ -56,7 +56,7 @@ function Engine() {
             }
         }
 
-        camera.zoom = min(width / 480, height / 300) / 2.5;
+        camera.zoom = max(width / 480, height / 300) / 2.7;
         self.players.d[user.id].sprite.velocity.set(0, 0);
 
         drawSprites(self.bullets.group);
