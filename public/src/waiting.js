@@ -17,6 +17,18 @@ function Waiting() {
     this.keyPressed = () => {
         if (!user.logined) return;
         if (!roomData.roomid) return;
-        _engine.input(keyCode);
+        _engine.pressed(keyCode);
     };
+
+    this.keyReleased = () => {
+        if (!user.logined) return;
+        if (!roomData.roomid) return;
+        _engine.released(keyCode);
+    };
+
+    this.mousePressed = () => {
+        if (!user.logined) return;
+        if (!roomData.roomid) return;
+        _engine.mouse();
+    }
 }

@@ -131,11 +131,8 @@ module.exports = (io) => {
         });
 
         self.connections[socket.id].peer.on('data', msg => {
-            let data = "";
-            for(let i = 0; i < msg.length; i++)
-                data += String.fromCharCode(msg[i]);
             try {
-                data = JSON.parse(data);
+                data = JSON.parse(msg.toString());
             } catch (e) {
                 return;
             }

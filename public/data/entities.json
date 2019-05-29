@@ -1,11 +1,11 @@
 {
-  "1": {
+  "A": {
     "type": "player",
     "health": 100,
-    "input": "((k,p)=>{if(k==32){p.sprite.velocity.set(0,-15)}})",
-    "update": "((p)=>{if(keyIsDown(65)){p.sprite.position.add(-7,0)}if(keyIsDown(68)){p.sprite.position.add(7,0)}})",
+    "pressed": "((k,p)=>{if(k==32){p.sprite.velocity.y=-15}else if(k==65){p.sprite.velocity.add(-7,0)}else if(k==68){p.sprite.velocity.add(7,0)}})",
+    "released": "((k,p)=>{if(k==65){p.sprite.velocity.add(7,0)}else if(k==68){p.sprite.velocity.add(-7,0)}})",
     "img": "https://buttercrab.iptime.org/public/img/entity_1.png",
-    "mouse": "((p)=>{p.fire(p5.Vector.diff(createVector(camera.mouseX, camera.mouseY), p.sprite.position})",
-    "bullet": "1"
+    "mouse": "((p)=>{p.fire(p5.Vector.sub(createVector(camera.mouseX, camera.mouseY), p.sprite.position))})",
+    "bullet": "A"
   }
 }

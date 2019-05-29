@@ -26,19 +26,20 @@ socket.on('signal', msg => {
     peer.signal(msg.signal);
 });
 
+let peerConnected = false;
+
 peer.on('connect', () => {
+    peerConnected = true;
     peer.send(JSON.stringify({
         type: 'heartbeat'
     }));
+    refresh();
 });
 
 let lastTime = 0;
 
 peer.on('data', msg => {
-    let data = "";
-    for(let i = 0; i < msg.length; i++)
-        data += String.fromCharCode(msg[i]);
-    data = JSON.parse(data);
+    let data = JSON.parse(msg.toString());
     if (data.type === 'heartbeat') {
         setTimeout(() => {
             peer.send(JSON.stringify({

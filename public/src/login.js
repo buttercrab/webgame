@@ -113,6 +113,7 @@ socket.on('login', msg => {
     if (msg) {
         user.logined = true;
         getRooms();
+        refresh();
     } else {
         loginFailed(3);
         socket.emit('logined');
@@ -132,12 +133,14 @@ socket.on('user-data', msg => {
     user = msg;
     user.isGuest = (msg.isGuest === true);
     getRooms();
+    refresh();
 });
 
 socket.on('register', msg => {
     if (msg) {
         user.logined = true;
         getRooms();
+        refresh();
     } else {
         registerFailed(4);
         socket.emit('logined');
@@ -467,7 +470,7 @@ function refresh() {
         removeElements();
         onLoading = false;
     }
-    if (user.logined) {
+    if (user.logined && peerConnected) {
         removeElements();
         if (!roomData.roomid)
             makeRoomList();

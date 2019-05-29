@@ -1,14 +1,16 @@
 function Entity(id) {
     const self = this;
 
-    self.sprite = createSprite(0, 0, 0, 0);
+    self.sprite = createSprite(100, 100);
     self.id = id;
     self.sprite.tag = 'Entity';
     self.sprite.restitution = 0.9;
-    self.sprite.setCollider('rectangle', 0, 0, 30, 30);
     self.type = 'A';
+    self.sprite.setCollider('rectangle', 0, 0, 60, 60);
     self.sprite.addAnimation('img', charData[self.type].img);
     self.health = charData[self.type].health;
+
+    self.sprite.debug = true;
 
     self.sprite.hit = bullet => {
         if (_engine.bullets.d[bullet.num].shooter !== self.id) {
@@ -21,7 +23,6 @@ function Entity(id) {
         switch (msg.type) {
             case 'pos':
                 self.sprite.position.set(msg.data.pos.x, msg.data.pos.y);
-                self.sprite.velocity.set(msg.data.vel.x, msg.data.vel.y);
                 break;
             case 'fire':
                 self.fire(msg.data);
@@ -34,8 +35,8 @@ function Entity(id) {
 
     self.update = () => {
         self.sprite.velocity.add(0, 1);
-        if(self.sprite.position.y >= 300) {
-            self.sprite.position.y = 300;
+        if(self.sprite.position.y >= 500) {
+            self.sprite.position.y = 500;
             self.sprite.velocity.y = 0;
         }
         peer.send(JSON.stringify({
@@ -44,10 +45,6 @@ function Entity(id) {
                 pos: {
                     x: self.sprite.position.x,
                     y: self.sprite.position.y
-                },
-                vel: {
-                    x: self.sprite.velocity.x,
-                    y: self.sprite.velocity.y
                 }
             }
         }));

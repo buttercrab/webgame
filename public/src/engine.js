@@ -1,7 +1,6 @@
 function Engine() {
     const self = this;
 
-    self.a = createSprite(10, 10, 10, 10);
     self.player = new Entity(socket.id);
     self.player.sprite.draw = () => {};
     self.players = new Entities(); // includes enemy
@@ -12,7 +11,7 @@ function Engine() {
     }
 
     self.bullets = new Bullets();
-    self.map = new Map();
+    self.map = new MyMap();
     // self.items = new Group();
 
     self.shake = createVector(0, 0);
@@ -28,11 +27,10 @@ function Engine() {
         }
     });
 
-    self.players.group.bounce(self.map.group);
+    self.player.sprite.collide(self.map.group);
 
     self.update = () => {
         self.player.update();
-        eval(charData[self.player.type].update)(self.player);
     };
 
     self.draw = () => {
@@ -55,7 +53,7 @@ function Engine() {
 
         drawSprites(self.bullets.group);
         drawSprites(self.players.group);
-        drawSprite(self.a);
+        drawSprites(self.map.group);
     };
 
     self.data = msg => {
@@ -74,8 +72,16 @@ function Engine() {
         self.players.remove(id);
     };
 
-    self.input = k => {
-        eval(charData[self.player.type].input)(k, self.player);
+    self.pressed = k => {
+        eval(charData[self.player.type].pressed)(k, self.player);
+    };
+
+    self.released = k => {
+        eval(charData[self.player.type].released)(k, self.player);
+    };
+
+    self.mouse = () => {
+        eval(charData[self.player.type].mouse)(self.player);
     };
 
     return self;
