@@ -9,8 +9,12 @@ module.exports = (roomid) => {
         self.users[id] = peer;
     };
 
+    self.leave = id => {
+        delete self.users[id];
+    };
+
     self.update = () => {
-        let res = JSON.stringify({type: 'data', data: self.datas, time: new Date().getTime()});
+        let res = JSON.stringify({type: 'data', data: self.datas});
         for(let id in self.users) {
             self.users[id].send(res);
         }

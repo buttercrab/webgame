@@ -36,8 +36,6 @@ peer.on('connect', () => {
     refresh();
 });
 
-let lastTime = 0;
-
 peer.on('data', msg => {
     let data = JSON.parse(msg.toString());
     if (data.type === 'heartbeat') {
@@ -47,9 +45,6 @@ peer.on('data', msg => {
             }));
         }, 10000);
     } else {
-        if(lastTime < data.time) {
-            lastTime = data.time;
-            _engine.data(data.data);
-        }
+        _engine.data(data.data);
     }
 });

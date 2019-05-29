@@ -1,6 +1,7 @@
 {
   "A": {
     "damage": 10,
-    "img": "https://buttercrab.iptime.org/public/img/bullet_1.png"
+    "img": "https://buttercrab.iptime.org/public/img/bullet_1.png",
+    "speed": 40
   }
 }

@@ -2,7 +2,8 @@ function Engine() {
     const self = this;
 
     self.player = new Entity(socket.id);
-    self.player.sprite.draw = () => {};
+    self.player.sprite.draw = () => {
+    };
     self.players = new Entities(); // includes enemy
     self.players.add(self.player);
 
@@ -17,32 +18,38 @@ function Engine() {
     self.shake = createVector(0, 0);
     self.follow = false;
 
-    self.players.group.collide(self.bullets.group, (a, b) => {
-        if (a.tag === 'Bullet') {
-            self.players.d[b.id].hit(a);
-            a.remove();
-        } else {
-            self.players.d[a.id].hit(b);
-            b.remove();
-        }
-    });
-
-    self.player.sprite.collide(self.map.group);
-
     self.update = () => {
+        eval(charData[self.player.type].update)(self.player);
+
         self.player.update();
+
+        for (let i = 0; i < self.players.group.size(); i++) {
+            for (let j = 0; j < self.bullets.group.size(); j++) {
+                if (self.players.group.get(i).overlapPoint(self.bullets.group.get(j).position.x, self.bullets.group.get(j).position.y)) {
+                    self.players.d[self.players.group.get(i).id].hit(self.bullets.group.get(j));
+                }
+            }
+        }
+
+        for (let i = 0; i < self.map.group.size(); i++) {
+            for (let j = 0; j < self.bullets.group.size(); j++) {
+                if (self.map.group.get(i).overlapPoint(self.bullets.group.get(j).position.x, self.bullets.group.get(j).position.y)) {
+                    self.bullets.group.get(j).remove();
+                }
+            }
+        }
     };
 
     self.draw = () => {
         let p = self.players.d[user.id].sprite.position;
 
-        if(self.follow) {
+        if (self.follow) {
             camera.position.lerp(p, 0.1);
-            if(camera.position.dist(p) < 1) {
+            if (camera.position.dist(p) < 1) {
                 self.follow = false;
             }
         } else {
-            if(abs(camera.position.x - p.x) >= 160 || abs(camera.position.y - p.y) >= 100) {
+            if (abs(camera.position.x - p.x) >= 160 || abs(camera.position.y - p.y) >= 100) {
                 self.follow = true;
             }
         }

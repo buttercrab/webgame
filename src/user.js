@@ -207,7 +207,7 @@ module.exports = (io) => {
         self.room[roomid].ids[socketid] = false;
         self.room[roomid].game.connect(socketid, self.connections[socketid].peer);
         self.room[roomid].count++;
-        self.io.of(roomid).emit('join-room', {id: socketid});
+        self.io.to(roomid).emit('join-room', {id: socketid});
         return true;
     };
 
@@ -221,6 +221,7 @@ module.exports = (io) => {
             self.room[roomid].ids[Object.keys(self.room[roomid].ids)[0]] = true;
         } else self.room[roomid].ids[socketid] = undefined;
         self.room[roomid].count--;
+        self.room[roomid].game.leave(socketid);
         if (self.room[roomid].count === 0) {
             self.room[roomid].game.end();
             delete self.room[roomid];
@@ -228,7 +229,7 @@ module.exports = (io) => {
         delete self.connections[socketid].roomid;
         self.connections[socketid].socket.leave(roomid, err => {
         });
-        self.io.of(roomid).emit('leave-room', {id: socketid});
+        self.io.to(roomid).emit('leave-room', {id: socketid});
     };
 
     self.getRoomData = (socketid) => {

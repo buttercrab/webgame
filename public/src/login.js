@@ -163,11 +163,13 @@ socket.on('get-rooms', data => {
 });
 
 socket.on('join-room', data => {
-    _engine.addPlayer(data.id);
+    if (data.id !== user.id)
+        _engine.addPlayer(data.id);
 });
 
 socket.on('leave-room', data => {
-    _engine.removePlayer(data.id);
+    if (data.id !== user.id)
+        _engine.removePlayer(data.id);
 });
 
 ///==========
