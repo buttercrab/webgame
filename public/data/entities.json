@@ -2,7 +2,7 @@
   "A": {
     "type": "player",
     "health": 100,
-    "pressed": "((k,p)=>{if(k==32)p.sprite.velocity.y=-15;})",
+    "pressed": "((k,p)=>{if(k==32)p.sprite.velocity.y=-18;})",
     "released": "((k,p)=>{})",
     "update": "((p)=>{if(keyIsDown(65))p.sprite.velocity.x=-7;else if(keyIsDown(68))p.sprite.velocity.x=7;if(!(keyIsDown(65)^keyIsDown(68)))p.sprite.velocity.x=0;})",
     "img": "https://buttercrab.iptime.org/public/img/entity_1.png",

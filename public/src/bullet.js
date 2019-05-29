@@ -6,8 +6,14 @@ function Bullet(pos, vel, type, shooter) {
     self.sprite.position.set(pos);
     self.sprite.velocity.set(vel.mult(bullData[self.type].speed));
     self.sprite.tag = 'Bullet';
-    self.sprite.addAnimation('img', bullData[self.type].img);
     self.shooter = shooter;
+
+    self.sprite.draw = () => {
+        fill('#262626');
+        ellipse(0, 0, 7, 7);
+    };
+
+    self.scale = 0.1;
 
     self.die = () => {
         self.isDead = true;

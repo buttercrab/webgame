@@ -13,10 +13,12 @@ function Engine() {
 
     self.bullets = new Bullets();
     self.map = new MyMap();
-    // self.items = new Group();
 
     self.shake = createVector(0, 0);
     self.follow = false;
+
+    self.pointer = createSprite(0, 0, 0, 0);
+    self.pointer.addAnimation('img', 'https://buttercrab.iptime.org/public/img/pointer_1.png');
 
     self.update = () => {
         eval(charData[self.player.type].update)(self.player);
@@ -54,13 +56,17 @@ function Engine() {
             }
         }
 
-        camera.zoom = min(width / 480, height / 300) / 2;
+        camera.zoom = min(width / 480, height / 300) / 2.5;
         self.players.d[user.id].sprite.velocity.set(0, 0);
-
 
         drawSprites(self.bullets.group);
         drawSprites(self.players.group);
         drawSprites(self.map.group);
+
+        camera.off();
+
+        self.pointer.position.set(mouseX, mouseY);
+        drawSprite(self.pointer);
     };
 
     self.data = msg => {

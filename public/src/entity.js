@@ -6,9 +6,14 @@ function Entity(id) {
     self.sprite.tag = 'Entity';
     self.sprite.restitution = 0;
     self.type = 'A';
-    self.sprite.setCollider('rectangle', 0, 0, 60, 60);
-    self.sprite.addAnimation('img', charData[self.type].img);
+    self.sprite.setCollider('circle', 0, 0, 28, 28);
     self.health = charData[self.type].health;
+
+    self.sprite.draw = () => {
+        if (user.id === self.sprite.id) fill('#60aa4b');
+        else fill('#5675c2');
+        ellipse(0, 0, 56, 56);
+    };
 
     self.hit = bullet => {
         if (_engine.bullets.d[bullet.num].shooter !== self.sprite.id) {
@@ -50,7 +55,6 @@ function Entity(id) {
     self.fire = (x, y) => {
         let pos = self.sprite.position;
         let vel = createVector(x, y).normalize();
-        console.log(vel);
         _engine.bullets.add(new Bullet(pos, vel, self.type, self.sprite.id));
     };
 

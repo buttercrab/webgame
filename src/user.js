@@ -240,10 +240,14 @@ module.exports = (io) => {
             users: {}
         };
         for (let i in self.room[self.connections[socketid].roomid].ids) {
-            res.users[i] = {
-                king: self.room[self.connections[socketid].roomid].ids[i],
-                name: self.connections[i].id
-            };
+            try {
+                res.users[i] = {
+                    king: self.room[self.connections[socketid].roomid].ids[i],
+                    name: self.connections[i].id
+                };
+            } catch (e) {
+
+            }
         }
         return res;
     };

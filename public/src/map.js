@@ -19,8 +19,8 @@ function MyMap() {
     self.type = "A";
     self.group = new Group();
 
-    for (let i = 0; i < 20; i++) {
-        for (let j = 0; j < 11; j++) {
+    for (let i = 0; i < 40; i++) {
+        for (let j = 0; j < 20; j++) {
             if (mapData[self.type][j][i] === '1')
                 self.group.add(new MyMapElement(0, i, j).sprite);
         }
