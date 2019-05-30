@@ -172,6 +172,12 @@ socket.on('leave-room', data => {
         _engine.removePlayer(data.id);
 });
 
+socket.on('leave-room-callback', () => {
+    _engine = null;
+    roomData = {};
+    refresh();
+});
+
 ///==========
 
 let registerFailMsg = '', loginFailMsg = '';
@@ -482,5 +488,6 @@ function refresh() {
         return;
     }
 
-    viewLogin();
+    if (!user.logined)
+        viewLogin();
 }

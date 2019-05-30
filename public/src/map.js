@@ -15,7 +15,7 @@ function MyMapElement(type, x, y, w, h) {
 function MyMap() {
     const self = this;
 
-    self.type = "A";
+    self.type = '0';
     self.group = new Group();
 
     let w = mapData[self.type].w;

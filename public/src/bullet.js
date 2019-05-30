@@ -9,8 +9,9 @@ function Bullet(pos, vel, type, shooter) {
     self.shooter = shooter;
 
     self.sprite.draw = () => {
-        fill('#262626');
-        ellipse(0, 0, 7, 7);
+        rotate((self.sprite.getDirection() + 90) / 180 * Math.PI);
+        fill('#494949');
+        rect(0, 0, 3, 12);
     };
 
     self.scale = 0.1;

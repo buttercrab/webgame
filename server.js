@@ -225,6 +225,7 @@ function server(certs) {
 
         socket.on('leave-room', () => {
             user.leaveRoom(socket.id);
+            socket.emit('leave-room-callback');
         });
 
         socket.on('room-data', () => {

@@ -4,8 +4,12 @@ function Engine() {
     self.player = new Entity(socket.id);
     self.player.sprite.draw = () => {
     };
+    peer.send(JSON.stringify({
+        type: 'type',
+        data: self.player.type
+    }));
     self.players = new Entities(); // includes enemy
-    self.players.add(self.player);
+    // self.players.add(self.player);
 
     for (let id in roomData.users) {
         self.players.add(new Entity(id));
@@ -56,12 +60,12 @@ function Engine() {
             }
         }
 
-        camera.zoom = max(width / 480, height / 300) / 2.7;
+        camera.zoom = max(width / 480, height / 300) / 3.2;
         self.players.d[user.id].sprite.velocity.set(0, 0);
 
+        drawSprites(self.map.group);
         drawSprites(self.bullets.group);
         drawSprites(self.players.group);
-        drawSprites(self.map.group);
 
         camera.off();
 

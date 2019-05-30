@@ -234,22 +234,25 @@ module.exports = (io) => {
 
     self.getRoomData = (socketid) => {
         if (!self.logined(socketid)) return;
-        let res = {
-            roomid: self.connections[socketid].roomid,
-            name: self.room[self.connections[socketid].roomid].name,
-            users: {}
-        };
-        for (let i in self.room[self.connections[socketid].roomid].ids) {
-            try {
-                res.users[i] = {
-                    king: self.room[self.connections[socketid].roomid].ids[i],
-                    name: self.connections[i].id
-                };
-            } catch (e) {
+        try {
+            let res = {
+                roomid: self.connections[socketid].roomid,
+                name: self.room[self.connections[socketid].roomid].name,
+                users: {}
+            };
+            for (let i in self.room[self.connections[socketid].roomid].ids) {
+                try {
+                    res.users[i] = {
+                        king: self.room[self.connections[socketid].roomid].ids[i],
+                        name: self.connections[i].id
+                    };
+                } catch (e) {
 
+                }
             }
+            return res;
+        } catch (e) {
         }
-        return res;
     };
 
     self.getUsername = (socketid) => {
