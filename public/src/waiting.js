@@ -10,6 +10,13 @@ function Waiting() {
 
         background('#fff');
 
+        if (_ai_engine !== null) {
+            _ai_engine.update();
+            _ai_engine.draw();
+
+            return;
+        }
+
         _engine.update();
         _engine.draw();
     };

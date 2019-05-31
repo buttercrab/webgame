@@ -2,16 +2,16 @@
   "0": {
     "type": "player",
     "health": 100,
-    "pressed": "((k,p)=>{if(k==32)p.sprite.velocity.y=-16;})",
+    "pressed": "((k,p)=>{if(k==32)p.sprite.velocity.y=-23;})",
     "released": "((k,p)=>{})",
-    "update": "((p)=>{if(keyIsDown(65))p.sprite.velocity.x=-7;else if(keyIsDown(68))p.sprite.velocity.x=7;if(!(keyIsDown(65)^keyIsDown(68)))p.sprite.velocity.x=0;})",
+    "update": "((p)=>{if(keyIsDown(65))p.sprite.velocity.x=-10;else if(keyIsDown(68))p.sprite.velocity.x=10;if(!(keyIsDown(65)^keyIsDown(68)))p.sprite.velocity.x=0;})",
     "mouse": "((p)=>{let l=p5.Vector.sub(createVector(camera.mouseX, camera.mouseY), p.sprite.position);peer.send(JSON.stringify({type:'fire',data:{x:l.x,y:l.y}}))})",
     "bullet": "0"
   },
   "1": {
     "type": "player",
     "health": 100,
-    "pressed": "((k,p)=>{if(k==65)p.sprite.velocity.set(-7,-16);else if(k==68)p.sprite.velocity.set(7,-16);})",
+    "pressed": "((k,p)=>{if(k==65)p.sprite.velocity.set(-10,-23);else if(k==68)p.sprite.velocity.set(10,-23);})",
     "released": "((k,p)=>{})",
     "update": "((p)=>{p.sprite.velocity.x*=0.99;})",
     "mouse": "((p)=>{let l=p5.Vector.sub(createVector(camera.mouseX, camera.mouseY), p.sprite.position);peer.send(JSON.stringify({type:'fire',data:{x:l.x,y:l.y}}))})",

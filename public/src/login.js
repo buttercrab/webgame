@@ -478,10 +478,10 @@ function refresh() {
         startLoading();
         return;
     }
-    if (onLoading) {
-        removeElements();
-        onLoading = false;
-    }
+    // if (onLoading) {
+    //     removeElements();
+    //     onLoading = false;
+    // }
     if (user.logined && peerConnected) {
         removeElements();
         if (!roomData.roomid)

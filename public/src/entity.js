@@ -8,6 +8,7 @@ function Entity(id) {
     self.type = Math.floor(Math.random() * 2) + '';
     self.sprite.setCollider('circle', 0, 0, 28);
     self.health = charData[self.type].health;
+    self.sprite.maxSpeed = 50;
 
     self.sprite.limitSpeed(100);
 
@@ -63,7 +64,7 @@ function Entity(id) {
     };
 
     self.update = () => {
-        self.sprite.velocity.add(0, 1.1);
+        self.sprite.velocity.add(0, 1.8);
 
         self.sprite.bounce(_engine.map.group, (a, b) => {
             if (a.tag === 'Entity') a.velocity.x *= 0.3;

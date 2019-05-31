@@ -41,5 +41,10 @@ function Bullets() {
         self.group.add(bullet.sprite);
     };
 
+    self.clear = () => {
+        self.group.removeSprites();
+        self.d = {};
+    };
+
     return self;
 }

@@ -238,7 +238,7 @@ module.exports = (io) => {
     };
 
     self.getRoomData = (socketid) => {
-        if (!self.logined(socketid)) return;
+        if (!self.logined(socketid)) return {};
         try {
             let res = {
                 roomid: self.connections[socketid].roomid,
@@ -254,6 +254,7 @@ module.exports = (io) => {
             }
             return res;
         } catch (e) {
+            return {};
         }
     };
 
