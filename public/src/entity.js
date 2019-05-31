@@ -17,10 +17,15 @@ function Entity(id) {
         ellipse(0, 0, 56, 56);
 
         fill('#aa131f');
-        rect(0, -33, 56, 6);
+        rect(0, -33, 56, 8);
         fill('#26aa19');
         let w = self.health / charData[self.type].health * 56;
-        rect(28 - w / 2, -33, w, 6);
+        rect(28 - w / 2, -33, w, 8);
+
+        fill('#1a1a1a');
+        textFont(mainFont);
+        textSize(18);
+        text(roomData.users[self.sprite.id].name, -textWidth(roomData.users[self.sprite.id].name) / 2, -40);
     };
 
     self.hit = bullet => {

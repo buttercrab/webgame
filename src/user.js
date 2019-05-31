@@ -49,7 +49,7 @@ module.exports = (io) => {
         self.connections[socketid].loginedUsers = false;
         self.connections[socketid].isGuest = true;
         self.connections[socketid].id = uniqid('Guest-');
-        self.connections[socketid].name = name;
+        self.connections[socketid].name = 'guest-' + name;
     };
 
     self.logout = (socketid) => {
@@ -118,6 +118,7 @@ module.exports = (io) => {
             self.connections[socket.id].loginedUsers = true;
             self.connections[socket.id].isGuest = false;
             self.connections[socket.id].id = socket.handshake.session.userid;
+            self.connections[socket.id].name = self.userData[socket.handshake.session.userid].nm;
         }
 
         self.connections[socket.id].peer.on('error', err => {
@@ -207,7 +208,11 @@ module.exports = (io) => {
         self.room[roomid].ids[socketid] = false;
         self.room[roomid].game.connect(socketid, self.connections[socketid].peer);
         self.room[roomid].count++;
-        self.io.to(roomid).emit('join-room', {id: socketid});
+        self.io.to(roomid).emit('join-room', {
+            id: socketid,
+            name: self.connections[socketid].name,
+            _id: self.connections[socketid].id
+        });
         return true;
     };
 
@@ -241,14 +246,11 @@ module.exports = (io) => {
                 users: {}
             };
             for (let i in self.room[self.connections[socketid].roomid].ids) {
-                try {
-                    res.users[i] = {
-                        king: self.room[self.connections[socketid].roomid].ids[i],
-                        name: self.connections[i].id
-                    };
-                } catch (e) {
-
-                }
+                res.users[i] = {
+                    king: self.room[self.connections[socketid].roomid].ids[i],
+                    id: self.connections[i].id,
+                    name: self.connections[i].name
+                };
             }
             return res;
         } catch (e) {

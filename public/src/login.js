@@ -163,6 +163,12 @@ socket.on('get-rooms', data => {
 });
 
 socket.on('join-room', data => {
+    if (data.id === user.id) return;
+    roomData.users[data.id] = {
+        king: false,
+        id: data._id,
+        name: data.name
+    };
     if (data.id !== user.id)
         _engine.addPlayer(data.id);
 });
@@ -295,7 +301,6 @@ function viewLogin() {
 
     createDiv(`
 <div class="title">
-<!--    <img src="https://buttercrab.iptime.org/public/img/logo.png" alt="Bang">-->
 Bang
 </div>
 <div class="form-structor" id="base">
@@ -374,7 +379,6 @@ Bang
 function getRoomHTML() {
     let res = `
 <div class="room-list-title">
-<!--    <img src="https://buttercrab.iptime.org/public/img/logo-white.png" alt="Bang"/>-->
 Bang
 </div>
 <div class="room-list">
