@@ -24,18 +24,21 @@ function Waiting() {
     this.keyPressed = () => {
         if (!user.logined) return;
         if (!roomData.roomid) return;
-        _engine.pressed(keyCode);
+        if (_ai_engine === null)
+            _engine.pressed(keyCode);
     };
 
     this.keyReleased = () => {
         if (!user.logined) return;
         if (!roomData.roomid) return;
-        _engine.released(keyCode);
+        if (_ai_engine === null)
+            _engine.released(keyCode);
     };
 
     this.mousePressed = () => {
         if (!user.logined) return;
         if (!roomData.roomid) return;
-        _engine.mouse();
+        if (_ai_engine === null)
+            _engine.mouse();
     }
 }

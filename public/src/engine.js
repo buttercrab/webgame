@@ -16,13 +16,16 @@ function Engine() {
     }
 
     self.bullets = new Bullets();
-    self.map = new MyMap();
+    self.map = new MyMap('0');
 
     self.shake = createVector(0, 0);
     self.follow = false;
 
     self.pointer = createSprite(0, 0, 0, 0);
     self.pointer.addAnimation('img', 'https://buttercrab.iptime.org/public/img/pointer_1.png');
+
+    self.ai = new Group();
+    self.ai_entity = [];
 
     self.update = () => {
         eval(charData[self.player.type].update)(self.player);
@@ -41,6 +44,24 @@ function Engine() {
             for (let j = 0; j < self.bullets.group.size(); j++) {
                 if (self.map.group.get(i).overlapPoint(self.bullets.group.get(j).position.x, self.bullets.group.get(j).position.y)) {
                     self.bullets.group.get(j).remove();
+                }
+            }
+        }
+
+        for (let i in self.ai_entity) {
+            if (self.ai_entity[i].entity.sprite.removed) continue;
+
+            self.ai_entity[i].update();
+
+            if (self.ai_entity[i].entity.health === 0 && !self.ai_entity[i].entity.sprite.removed) {
+                self.ai_entity[i].entity.sprite.remove();
+            }
+        }
+
+        for (let i = 0; i < self.ai.size(); i++) {
+            for (let j = 0; j < self.bullets.group.size(); j++) {
+                if (self.ai.get(i).overlapPoint(self.bullets.group.get(j).position.x, self.bullets.group.get(j).position.y)) {
+                    self.ai_entity[self.ai.get(i).id].entity.hit(self.bullets.group.get(j));
                 }
             }
         }
@@ -66,6 +87,7 @@ function Engine() {
         drawSprites(self.map.group);
         drawSprites(self.bullets.group);
         drawSprites(self.players.group);
+        drawSprites(self.ai);
 
         camera.off();
 
@@ -99,6 +121,15 @@ function Engine() {
 
     self.mouse = () => {
         eval(charData[self.player.type].mouse)(self.player);
+    };
+
+    self.aicount = 0;
+
+    self.addAI = data => {
+        let ai = new AIEntity(aicount++, _engine);
+        ai.lay = data;
+        self.ai_entity.add(ai);
+        self.ai.add(ai.entity.sprite);
     };
 
     return self;

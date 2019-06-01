@@ -12,10 +12,10 @@ function MyMapElement(type, x, y, w, h) {
     return self;
 }
 
-function MyMap() {
+function MyMap(type) {
     const self = this;
 
-    self.type = '0';
+    self.type = type;
     self.group = new Group();
 
     let w = mapData[self.type].w;

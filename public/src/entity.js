@@ -1,7 +1,7 @@
 function Entity(id) {
     const self = this;
 
-    self.sprite = createSprite(100, 100);
+    self.sprite = createSprite(Math.random() * 1500 + 100, Math.random() * 1500 + 100);
     self.sprite.id = id;
     self.sprite.tag = 'Entity';
     self.sprite.restitution = 0.1;
