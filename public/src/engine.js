@@ -1,7 +1,7 @@
 function Engine() {
     const self = this;
 
-    self.player = new Entity(socket.id);
+    self.player = new Entity(socket.id, createVector(Math.random() * 1500 + 100, Math.random() * 1500 + 100));
     self.player.sprite.draw = () => {
     };
     peer.send(JSON.stringify({
@@ -12,7 +12,7 @@ function Engine() {
     // self.players.add(self.player);
 
     for (let id in roomData.users) {
-        self.players.add(new Entity(id));
+        self.players.add(new Entity(id, createVector(Math.random() * 1500 + 100, Math.random() * 1500 + 100)));
     }
 
     self.bullets = new Bullets();
@@ -104,7 +104,7 @@ function Engine() {
     };
 
     self.addPlayer = id => {
-        self.players.add(new Entity(id));
+        self.players.add(new Entity(id, createVector(0, 0)));
     };
 
     self.removePlayer = id => {
