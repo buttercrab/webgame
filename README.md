@@ -1,7 +1,5 @@
 # Webgame
 
-### [https://buttercrab.iptime.org](https://buttercrab.iptime.org)
-
 **Some Problem with Domain**
 **Check Unsafe**
 
